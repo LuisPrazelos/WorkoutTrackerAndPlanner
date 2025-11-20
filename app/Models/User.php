@@ -59,4 +59,17 @@ class User extends Authenticatable
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
+
+    /*De workout schema's die bij de gebruiker horen.*/
+
+    public function workoutSchemas()
+    {
+        return $this->hasMany(WorkoutSchema::class);
+    }
+
+     /* De exercise logs die bij de gebruiker horen.*/
+    public function exerciseLogs()
+    {
+        return $this->hasMany(ExerciseLog::class);
+    }
 }
