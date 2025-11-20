@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('exercise_logs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('exercise_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('workout_schema_id')->constrained()->cascadeOnDelete();
+
+            $table->unsignedInteger('sets');
+            $table->unsignedInteger('reps');
+            $table->decimal('weight', 8, 2)->nullable();
+            $table->text('notes')->nullable();
+
             $table->timestamps();
         });
     }
