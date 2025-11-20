@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ExerciseSeeder::class,
             WorkoutSchemaSeeder::class,
+            ExerciseLogSeeder::class,
             // Hier komen later andere seeders...
 
         ]);
