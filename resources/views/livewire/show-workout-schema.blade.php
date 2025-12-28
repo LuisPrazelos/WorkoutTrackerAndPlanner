@@ -91,4 +91,26 @@
             </form>
         @endif
     </div>
+
+    @if($isMemberView)
+        <!-- Workout History -->
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg p-6 dark:bg-gray-700 dark:border-gray-600">
+            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Workout Geschiedenis</h2>
+            <div class="space-y-4">
+                @forelse ($workoutSchema->exerciseLogs->sortByDesc('created_at') as $log)
+                    <div class="border-b border-gray-200 dark:border-gray-600 py-3 last:border-b-0">
+                        <p class="text-lg font-medium text-gray-900 dark:text-white">{{ $log->exercise->name }}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                            <span class="font-semibold">{{ $log->sets }}</span> sets x
+                            <span class="font-semibold">{{ $log->reps }}</span> reps
+                            @if($log->weight > 0) @ <span class="font-semibold">{{ $log->weight }}</span> kg @endif
+                        </p>
+                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">{{ $log->created_at->format('d M Y, H:i') }}</p>
+                    </div>
+                @empty
+                    <p class="text-gray-600 dark:text-gray-300 text-center py-4">Je hebt nog geen oefeningen gelogd voor dit schema.</p>
+                @endforelse
+            </div>
+        </div>
+    @endif
 </div>

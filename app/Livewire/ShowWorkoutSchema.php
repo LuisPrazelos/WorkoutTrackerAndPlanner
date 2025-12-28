@@ -26,7 +26,8 @@ class ShowWorkoutSchema extends Component
             return redirect()->route('dashboard');
         }
 
-        $this->workoutSchema = $workoutSchema;
+        // Eager load relationships for efficiency
+        $this->workoutSchema = $workoutSchema->load(['schemaExercises.exercise', 'exerciseLogs.exercise']);
 
         // Initialize the logs array with existing data or defaults
         foreach ($this->workoutSchema->schemaExercises as $plannedExercise) {
@@ -64,6 +65,7 @@ class ShowWorkoutSchema extends Component
         ]);
 
         session()->flash('log_success_' . $schemaExerciseId, 'Logged!');
+        $this->workoutSchema->load('exerciseLogs.exercise'); // Refresh the logs
         $this->dispatch('log-added');
     }
 
