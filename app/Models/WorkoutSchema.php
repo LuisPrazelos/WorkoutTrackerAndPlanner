@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class WorkoutSchema extends Model
 {
@@ -28,5 +29,13 @@ class WorkoutSchema extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * De exercise logs die bij dit schema horen.
+     */
+    public function exerciseLogs(): HasMany
+    {
+        return $this->hasMany(ExerciseLog::class);
     }
 }
