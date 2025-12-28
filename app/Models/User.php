@@ -23,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role', // Added role
     ];
 
     /**
@@ -71,5 +72,10 @@ class User extends Authenticatable
     public function exerciseLogs()
     {
         return $this->hasMany(ExerciseLog::class);
+    }
+
+    public function isTrainer(): bool
+    {
+        return $this->role === 'trainer';
     }
 }

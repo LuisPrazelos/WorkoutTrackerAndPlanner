@@ -21,6 +21,19 @@ class WorkoutSchema extends Model
         'name',
         'description',
         'difficulty',
+        'scheduled_at',
+        'is_template',
+        'source_schema_id',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'scheduled_at' => 'date',
+        'is_template' => 'boolean',
     ];
 
     /**
@@ -37,5 +50,13 @@ class WorkoutSchema extends Model
     public function exerciseLogs(): HasMany
     {
         return $this->hasMany(ExerciseLog::class);
+    }
+
+    /**
+     * De geplande oefeningen voor dit schema.
+     */
+    public function schemaExercises(): HasMany
+    {
+        return $this->hasMany(SchemaExercise::class);
     }
 }

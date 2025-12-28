@@ -1,7 +1,11 @@
 <?php
 
+use App\Http\Middleware\EnsureUserIsTrainer;
+use App\Livewire\AssignSchema;
 use App\Livewire\CreateWorkoutSchema;
+use App\Livewire\Dashboard;
 use App\Livewire\ShowWorkoutSchema;
+use App\Livewire\Stats;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
@@ -14,14 +18,19 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('dashboard', function () {
-    $schemas = Auth::user()->workoutSchemas()->latest()->get();
-    return view('dashboard', ['schemas' => $schemas]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('dashboard', Dashboard::class)
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('workout-schemas/create', CreateWorkoutSchema::class)->name('workout-schemas.create');
+    Route::middleware([EnsureUserIsTrainer::class])->group(function () {
+        Route::get('workout-schemas/create', CreateWorkoutSchema::class)->name('workout-schemas.create');
+        Route::get('assign-schema', AssignSchema::class)->name('assign-schema');
+    });
+
     Route::get('workout-schemas/{workoutSchema}', ShowWorkoutSchema::class)->name('workout-schemas.show');
+
+    Route::get('stats', Stats::class)->name('stats');
 
     Route::redirect('settings', 'settings/profile');
 

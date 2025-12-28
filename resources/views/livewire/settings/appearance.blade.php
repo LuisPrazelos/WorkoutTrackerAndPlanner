@@ -1,11 +1,17 @@
-<section class="w-full">
-    @include('partials.settings-heading')
+<div>
+    <x-auth-header :title="__('Appearance')" :description="__('Customize the look and feel of your workspace.')" />
 
-    <x-settings.layout :heading="__('Appearance')" :subheading=" __('Update the appearance settings for your account')">
-        <flux:radio.group x-data variant="segmented" x-model="$flux.appearance">
-            <flux:radio value="light" icon="sun">{{ __('Light') }}</flux:radio>
-            <flux:radio value="dark" icon="moon">{{ __('Dark') }}</flux:radio>
-            <flux:radio value="system" icon="computer-desktop">{{ __('System') }}</flux:radio>
-        </flux:radio.group>
-    </x-settings.layout>
-</section>
+    <div class="mt-6">
+        <x-section>
+            <x-section.title>
+                {{ __('Theme') }}
+            </x-section.title>
+            <x-section.description>
+                {{ __('Select how you want your workspace to look. You can choose between light and dark, or have it sync with your system.') }}
+            </x-section.description>
+            <x-section.content>
+                <flux:theme-toggle />
+            </x-section.content>
+        </x-section>
+    </div>
+</div>
