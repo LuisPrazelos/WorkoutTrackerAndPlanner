@@ -11,6 +11,19 @@ class AppServiceProvider extends ServiceProvider
         return (bool) (env('VERCEL') ?: env('VERCEL_URL') ?: getenv('VERCEL') ?: getenv('VERCEL_URL'));
     }
 
+    protected function ensureDirectory(string $path): void
+    {
+        if (is_dir($path)) {
+            return;
+        }
+
+        if (@mkdir($path, 0755, true) || is_dir($path)) {
+            return;
+        }
+
+        throw new \RuntimeException("Unable to create directory [{$path}].");
+    }
+
     /**
      * Register any application services.
      */
@@ -35,9 +48,7 @@ class AppServiceProvider extends ServiceProvider
                 '/tmp/storage/framework/views',
                 '/tmp/storage/logs',
             ] as $path) {
-                if (!is_dir($path)) {
-                    mkdir($path, 0755, true);
-                }
+                $this->ensureDirectory($path);
             }
         }
     }
