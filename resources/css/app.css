@@ -9,8 +9,11 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    /* Set Outfit as a display font, Inter as a sans font */
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-heading: 'Outfit', 'Inter', ui-sans-serif, system-ui, sans-serif;
 
+    /* Base Colors */
     --color-zinc-50: #fafafa;
     --color-zinc-100: #f5f5f5;
     --color-zinc-200: #e5e5e5;
@@ -23,27 +26,92 @@
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
 
-    --color-accent: var(--color-neutral-800);
-    --color-accent-content: var(--color-neutral-800);
+    /* Custom Accents */
+    --color-cyan-400: #22d3ee;
+    --color-cyan-500: #06b6d4;
+
+    --color-accent: var(--color-indigo-600);
+    --color-accent-content: var(--color-indigo-600);
     --color-accent-foreground: var(--color-white);
 }
 
 @layer theme {
     .dark {
-        --color-accent: var(--color-white);
-        --color-accent-content: var(--color-white);
-        --color-accent-foreground: var(--color-neutral-800);
+        --color-accent: var(--color-cyan-400); /* Cyan pop for dark mode active states */
+        --color-accent-content: var(--color-cyan-400);
+        --color-accent-foreground: var(--color-white);
     }
 }
 
 @layer base {
-
     *,
     ::after,
     ::before,
     ::backdrop,
     ::file-selector-button {
         border-color: var(--color-gray-200, currentColor);
+    }
+
+    body {
+        /* Subtle transition for theme switching */
+        @apply transition-colors duration-300;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: var(--font-heading);
+    }
+
+    /* Global button & link interactivity */
+    button, 
+    [role="button"],
+    a[wire\:navigate],
+    [data-flux-button] {
+        @apply transition-all duration-200;
+    }
+
+    button:active, 
+    [role="button"]:active,
+    a[wire\:navigate]:active,
+    [data-flux-button]:active {
+        @apply scale-95;
+    }
+}
+
+@layer utilities {
+    /* Glassmorphism Styles */
+    .glass {
+        @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-sm dark:bg-zinc-900/60 dark:border-white/10 dark:shadow-md;
+    }
+    
+    .glass-card {
+        @apply bg-white/80 backdrop-blur-lg border border-gray-100 shadow-sm rounded-xl transition-all duration-300 hover:shadow-md dark:bg-zinc-800/80 dark:border-zinc-700 dark:hover:border-cyan-500/50 dark:hover:shadow-[0_0_15px_rgba(34,211,238,0.15)];
+    }
+
+    .glass-panel {
+        @apply bg-white/90 backdrop-blur-lg border border-gray-200 shadow-md rounded-2xl dark:bg-zinc-900/90 dark:border-zinc-800;
+    }
+
+    /* Gradient Text */
+    .text-gradient {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400 dark:from-indigo-400 dark:via-purple-400 dark:to-cyan-300;
+    }
+    
+    /* Vibrant Gradients */
+    .bg-vibrant {
+        @apply bg-gradient-to-r from-indigo-500 via-purple-600 to-cyan-500 dark:from-indigo-600 dark:via-purple-700 dark:to-cyan-600 text-white shadow-lg;
+    }
+
+    .border-cyan-active {
+        @apply border-b-2 border-cyan-400 shadow-[0_4px_10px_rgba(34,211,238,0.2)];
+    }
+
+    /* Premium Interactivity */
+    .hover-lift {
+        @apply transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:shadow-lg dark:hover:shadow-cyan-500/10 active:scale-95;
+    }
+
+    .vibrant-interactive {
+        @apply bg-vibrant hover:shadow-xl hover:shadow-indigo-500/20 active:scale-95 transition-all duration-300;
     }
 }
 
@@ -52,15 +120,12 @@
 }
 
 [data-flux-label] {
-    @apply  !mb-0 !leading-tight;
+    @apply !mb-0 !leading-tight font-medium;
 }
 
 input:focus[data-flux-control],
 textarea:focus[data-flux-control],
 select:focus[data-flux-control] {
-    @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+    @apply outline-none ring-2 ring-indigo-500 ring-offset-2 ring-offset-white dark:ring-indigo-400 dark:ring-offset-zinc-900 transition-shadow duration-200;
 }
 
-/* \[:where(&)\]:size-4 {
-    @apply size-4;
-} */

@@ -8,6 +8,7 @@ use App\Models\SchemaExercise;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 
 class ShowWorkoutSchema extends Component
 {
@@ -19,10 +20,11 @@ class ShowWorkoutSchema extends Component
     public function mount(WorkoutSchema $workoutSchema): RedirectResponse|null
     {
         $isOwner = $workoutSchema->user_id === Auth::id();
+        $isPublic = $workoutSchema->is_public;
         $isTrainerViewingTemplate = Auth::user()->isTrainer() && $workoutSchema->is_template;
 
-        if (!($isOwner || $isTrainerViewingTemplate)) {
-            session()->flash('error', 'You do not have access to this workout schema.');
+        if (!($isOwner || $isPublic || $isTrainerViewingTemplate)) {
+            session()->flash('error', 'Je hebt geen toegang tot dit schema.');
             return redirect()->route('dashboard');
         }
 
@@ -109,6 +111,39 @@ class ShowWorkoutSchema extends Component
             session()->flash('success', 'Schema deleted successfully.');
             return redirect()->route('dashboard');
         }
+    }
+
+    public function importSchema()
+    {
+        if ($this->workoutSchema->user_id === Auth::id()) {
+            session()->flash('error', 'Dit is al jouw eigen schema!');
+            return;
+        }
+
+        DB::transaction(function () {
+            // Replicate the schema for the current user
+            $newSchema = $this->workoutSchema->replicate([
+                'user_id', 'share_token', 'is_active', 'active_started_at', 'is_template'
+            ]);
+            
+            $newSchema->user_id = Auth::id();
+            $newSchema->is_template = false; // Personal copy
+            $newSchema->is_active = false;
+            $newSchema->active_started_at = null;
+            $newSchema->save(); // Generates new share_token
+
+            // Copy the planned exercises
+            foreach ($this->workoutSchema->schemaExercises as $exercise) {
+                $newSchema->schemaExercises()->create([
+                    'exercise_id' => $exercise->exercise_id,
+                    'target_sets' => $exercise->target_sets,
+                    'target_reps' => $exercise->target_reps,
+                ]);
+            }
+        });
+
+        session()->flash('success', 'Schema toegevoegd aan je dashboard!');
+        return redirect()->route('dashboard');
     }
 
     public function render()

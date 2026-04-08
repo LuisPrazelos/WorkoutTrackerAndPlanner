@@ -1,4 +1,5 @@
 <?php
+/*New middleware to ensure the user is an admin.*/
 
 namespace App\Http\Middleware;
 
@@ -6,7 +7,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureUserIsTrainer
+class EnsureUserIsAdmin
 {
     /**
      * Handle an incoming request.
@@ -15,8 +16,8 @@ class EnsureUserIsTrainer
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! $request->user() || ! $request->user()->isTrainer()) {
-            abort(403, 'Unauthorized action.');
+        if (! $request->user() || ! $request->user()->isAdmin()) {
+            abort(403, 'Unauthorized action. Admin access required.');
         }
 
         return $next($request);

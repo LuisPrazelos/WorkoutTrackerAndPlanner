@@ -13,32 +13,28 @@
 
             <flux:navlist variant="outline">
                 <flux:navlist.group :heading="__('Platform')" class="grid">
-                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
-                    @if(Auth::user()->isTrainer())
-                    <flux:navlist.item icon="plus-circle" :href="route('workout-schemas.create')" :current="request()->routeIs('workout-schemas.create')" wire:navigate>{{ __('Nieuwe Template') }}</flux:navlist.item>
-                    <flux:navlist.item icon="user-plus" :href="route('assign-schema')" :current="request()->routeIs('assign-schema')" wire:navigate>{{ __('Schema Toewijzen') }}</flux:navlist.item>
+                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>Dashboard</flux:navlist.item>
+                    <flux:navlist.item icon="book-open" :href="route('schemas.index')" :current="request()->routeIs('schemas.index')" wire:navigate>Schema Bibliotheek</flux:navlist.item>
+                    <flux:navlist.item icon="clipboard-document-list" :href="route('workout-log')" :current="request()->routeIs('workout-log')" wire:navigate>Workout Logboek</flux:navlist.item>
+                    <flux:navlist.item icon="chart-bar" :href="route('stats')" :current="request()->routeIs('stats')" wire:navigate>Statistieken</flux:navlist.item>
+                    <flux:navlist.item icon="plus-circle" :href="route('workout-schemas.create')" :current="request()->routeIs('workout-schemas.create')" wire:navigate>Nieuw Schema</flux:navlist.item>
+
+                    @if(Auth::user()->isAdmin())
+                    <flux:navlist.group heading="Admin" class="grid mt-2">
+                        <flux:navlist.item icon="users" :href="route('admin.users')" :current="request()->routeIs('admin.users')" wire:navigate>Beheer Gebruikers</flux:navlist.item>
+                    </flux:navlist.group>
                     @endif
-                    <flux:navlist.item icon="chart-bar" :href="route('stats')" :current="request()->routeIs('stats')" wire:navigate>{{ __('Statistieken') }}</flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
 
             <flux:spacer />
 
-            <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                {{ __('Repository') }}
-                </flux:navlist.item>
-
-                <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                {{ __('Documentation') }}
-                </flux:navlist.item>
-            </flux:navlist>
-
-            <div class="mt-auto p-4">
-                <button id="theme-toggle" type="button" class="flex items-center justify-center w-full rounded-lg bg-gray-100 dark:bg-gray-800 p-2.5 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">
-                    <svg id="theme-toggle-dark-icon" class="hidden h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                    <svg id="theme-toggle-light-icon" class="hidden h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 10.607a1 1 0 010-1.414l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM4.95 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707z"></path></svg>
-                    <span class="sr-only">Toggle theme</span>
+            <div class="mt-auto px-4 pb-4">
+                <button id="theme-toggle" type="button" class="flex gap-3 items-center w-full px-3 py-2 text-sm font-medium text-zinc-600 transition-colors rounded-lg hover:bg-zinc-200/50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white">
+                    <flux:icon name="moon" class="w-5 h-5 block dark:hidden" />
+                    <flux:icon name="sun" class="w-5 h-5 hidden dark:block" />
+                    <span class="block dark:hidden">Donkere Modus</span>
+                    <span class="hidden dark:block">Lichte Modus</span>
                 </button>
             </div>
 
@@ -101,19 +97,13 @@
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 const themeToggleBtn = document.getElementById('theme-toggle');
-                const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-                const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
 
                 // Function to apply theme
                 const applyTheme = (theme) => {
                     if (theme === 'dark') {
                         document.documentElement.classList.add('dark');
-                        themeToggleLightIcon.classList.remove('hidden');
-                        themeToggleDarkIcon.classList.add('hidden');
                     } else {
                         document.documentElement.classList.remove('dark');
-                        themeToggleDarkIcon.classList.remove('hidden');
-                        themeToggleLightIcon.classList.add('hidden');
                     }
                 };
 

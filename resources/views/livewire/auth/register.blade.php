@@ -1,5 +1,8 @@
-<div class="flex flex-col gap-6">
-    <x-auth-header :title="__('Create an account')" :description="__('Enter your details below to create your account')" />
+<div class="flex flex-col gap-8">
+    <div class="text-center space-y-2">
+        <h2 class="text-2xl font-bold tracking-tight text-white font-heading">{{ __('Join the Program') }}</h2>
+        <p class="text-sm text-zinc-400">{{ __('Create your account to start tracking your gains today.') }}</p>
+    </div>
 
     <!-- Session Status -->
     <x-auth-session-status class="text-center" :status="session('status')" />
@@ -8,55 +11,55 @@
         <!-- Name -->
         <flux:input
             wire:model="name"
-            :label="__('Name')"
+            :label="__('Full Name')"
             type="text"
             required
             autofocus
             autocomplete="name"
-            :placeholder="__('Full name')"
+            placeholder="John Doe"
         />
 
         <!-- Email Address -->
         <flux:input
             wire:model="email"
-            :label="__('Email address')"
+            :label="__('Email Address')"
             type="email"
             required
             autocomplete="email"
-            placeholder="email@example.com"
+            placeholder="name@example.com"
         />
 
         <!-- Password -->
         <flux:input
             wire:model="password"
-            :label="__('Password')"
+            :label="__('Create Password')"
             type="password"
             required
             autocomplete="new-password"
-            :placeholder="__('Password')"
+            placeholder="••••••••"
             viewable
         />
 
         <!-- Confirm Password -->
         <flux:input
             wire:model="password_confirmation"
-            :label="__('Confirm password')"
+            :label="__('Confirm Password')"
             type="password"
             required
             autocomplete="new-password"
-            :placeholder="__('Confirm password')"
+            placeholder="••••••••"
             viewable
         />
 
-        <div class="flex items-center justify-end">
-            <flux:button type="submit" variant="primary" class="w-full">
-                {{ __('Create account') }}
+        <div class="pt-2">
+            <flux:button type="submit" class="w-full bg-vibrant hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] text-white font-bold py-3 rounded-2xl transition-all active:scale-95">
+                {{ __('Begin Training') }}
             </flux:button>
         </div>
     </form>
 
-    <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
-        <span>{{ __('Already have an account?') }}</span>
-        <flux:link :href="route('login')" wire:navigate>{{ __('Log in') }}</flux:link>
+    <div class="space-x-1 text-center text-sm text-zinc-500">
+        <span>{{ __('Already part of the team?') }}</span>
+        <flux:link :href="route('login')" class="text-indigo-400 font-semibold" wire:navigate>{{ __('Log in') }}</flux:link>
     </div>
 </div>

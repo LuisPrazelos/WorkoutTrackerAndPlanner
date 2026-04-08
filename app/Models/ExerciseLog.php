@@ -23,6 +23,11 @@ class ExerciseLog extends Model
         'reps',
         'weight',
         'notes',
+        'logged_at',
+    ];
+
+    protected $casts = [
+        'logged_at' => 'date',
     ];
 
     /**

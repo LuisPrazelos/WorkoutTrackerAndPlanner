@@ -2,57 +2,170 @@
 
 namespace Database\Seeders;
 
+use App\Models\Exercise;
 use App\Models\User;
 use App\Models\WorkoutSchema;
-use App\Models\Exercise;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class WorkoutSchemaSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $trainer = User::where('email', 'trainer@example.com')->first();
-        $member = User::where('email', 'member@example.com')->first();
+        // Haal of maak een trainer
+        $trainer = User::where('role', 'trainer')->first() ?? User::factory()->create([
+            'name' => 'Trainer',
+            'email' => 'trainer@example.com',
+            'role' => 'trainer',
+        ]);
 
-        if ($trainer) {
-            // Template 1: Full Body
-            $fullBody = WorkoutSchema::create([
-                'user_id' => $trainer->id,
-                'name' => 'Full Body Strength',
-                'description' => 'A balanced workout routine focusing on major muscle groups.',
-                'difficulty' => 'intermediate',
-                'is_template' => true,
-            ]);
-            $fullBody->schemaExercises()->create(['exercise_id' => Exercise::where('name', 'Squat')->first()->id, 'target_sets' => 3, 'target_reps' => 10]);
-            $fullBody->schemaExercises()->create(['exercise_id' => Exercise::where('name', 'Bench Press')->first()->id, 'target_sets' => 3, 'target_reps' => 10]);
-            $fullBody->schemaExercises()->create(['exercise_id' => Exercise::where('name', 'Barbell Row')->first()->id, 'target_sets' => 3, 'target_reps' => 10]);
+        // Haal of maak een lid
+        $member = User::where('role', 'member')->first() ?? User::factory()->create([
+            'name' => 'Test Member',
+            'email' => 'member@example.com',
+            'role' => 'member',
+        ]);
 
-            // Template 2: Chest Day
-            $chestDay = WorkoutSchema::create([
-                'user_id' => $trainer->id,
-                'name' => 'Chest Annihilation',
-                'description' => 'A workout focused on building chest strength and size.',
-                'difficulty' => 'advanced',
-                'is_template' => true,
-            ]);
-            $chestDay->schemaExercises()->create(['exercise_id' => Exercise::where('name', 'Bench Press')->first()->id, 'target_sets' => 5, 'target_reps' => 5]);
+        // Haal oefeningen op per categorie
+        $chest = Exercise::where('muscle_group', 'chest')->get();
+        $shoulders = Exercise::where('muscle_group', 'shoulders')->get();
+        $triceps = Exercise::where('muscle_group', 'triceps')->get();
+        $back = Exercise::where('muscle_group', 'back')->get();
+        $biceps = Exercise::where('muscle_group', 'biceps')->get();
+        $legs = Exercise::where('muscle_group', 'legs')->get();
+        $core = Exercise::where('muscle_group', 'core')->get();
+
+        // 1. PUSH SCHEMA
+        $pushTemplate = WorkoutSchema::create([
+            'user_id' => $trainer->id,
+            'name' => 'Push Day (Borst, Schouders, Triceps)',
+            'description' => 'Focus op de duwspieren. Ideaal om kracht en massa op te bouwen in het bovenlichaam.',
+            'difficulty' => 'intermediate',
+            'category' => 'push',
+            'goal' => 'muscle_gain',
+            'is_template' => true,
+        ]);
+
+        $pushExercises = [
+            ['exercise' => $chest->where('name', 'Bench Press')->first(), 'sets' => 4, 'reps' => 8],
+            ['exercise' => $chest->where('name', 'Incline Dumbbell Press')->first(), 'sets' => 3, 'reps' => 10],
+            ['exercise' => $shoulders->where('name', 'Overhead Press')->first(), 'sets' => 4, 'reps' => 8],
+            ['exercise' => $shoulders->where('name', 'Lateral Raise')->first(), 'sets' => 3, 'reps' => 12],
+            ['exercise' => $triceps->where('name', 'Tricep Pushdown')->first(), 'sets' => 3, 'reps' => 12],
+        ];
+
+        foreach ($pushExercises as $ex) {
+            if ($ex['exercise']) {
+                $pushTemplate->schemaExercises()->create([
+                    'exercise_id' => $ex['exercise']->id,
+                    'target_sets' => $ex['sets'],
+                    'target_reps' => $ex['reps'],
+                ]);
+            }
         }
 
-        if ($member) {
-            // Create an assigned schema for the member to see on their dashboard
-            $memberSchema = WorkoutSchema::create([
+        // 2. PULL SCHEMA
+        $pullTemplate = WorkoutSchema::create([
+            'user_id' => $trainer->id,
+            'name' => 'Pull Day (Rug, Biceps)',
+            'description' => 'Focus op de trekspieren. Voor een een indrukwekkende V-taper en sterke armen.',
+            'difficulty' => 'intermediate',
+            'category' => 'pull',
+            'goal' => 'muscle_gain',
+            'is_template' => true,
+        ]);
+
+        $pullExercises = [
+            ['exercise' => $back->where('name', 'Deadlift')->first(), 'sets' => 4, 'reps' => 5],
+            ['exercise' => $back->where('name', 'Pull-Up')->first(), 'sets' => 3, 'reps' => 8],
+            ['exercise' => $back->where('name', 'Barbell Row')->first(), 'sets' => 3, 'reps' => 10],
+            ['exercise' => $biceps->where('name', 'Barbell Curl')->first(), 'sets' => 3, 'reps' => 10],
+            ['exercise' => $biceps->where('name', 'Hammer Curl')->first(), 'sets' => 3, 'reps' => 12],
+        ];
+
+        foreach ($pullExercises as $ex) {
+            if ($ex['exercise']) {
+                $pullTemplate->schemaExercises()->create([
+                    'exercise_id' => $ex['exercise']->id,
+                    'target_sets' => $ex['sets'],
+                    'target_reps' => $ex['reps'],
+                ]);
+            }
+        }
+
+        // 3. LEGS SCHEMA
+        $legsTemplate = WorkoutSchema::create([
+            'user_id' => $trainer->id,
+            'name' => 'Leg Day (Quads, Hams, Kuiten)',
+            'description' => 'Sla noot leg day over. Dit schema richt zich op maximale beenontwikkeling.',
+            'difficulty' => 'intermediate',
+            'category' => 'legs',
+            'goal' => 'strength',
+            'is_template' => true,
+        ]);
+
+        $legsExercises = [
+            ['exercise' => $legs->where('name', 'Squat')->first(), 'sets' => 4, 'reps' => 6],
+            ['exercise' => $legs->where('name', 'Leg Press')->first(), 'sets' => 3, 'reps' => 10],
+            ['exercise' => $legs->where('name', 'Romanian Deadlift')->first(), 'sets' => 3, 'reps' => 10],
+            ['exercise' => $legs->where('name', 'Leg Curl')->first(), 'sets' => 3, 'reps' => 12],
+            ['exercise' => $legs->where('name', 'Calf Raise')->first(), 'sets' => 4, 'reps' => 15],
+        ];
+
+        foreach ($legsExercises as $ex) {
+            if ($ex['exercise']) {
+                $legsTemplate->schemaExercises()->create([
+                    'exercise_id' => $ex['exercise']->id,
+                    'target_sets' => $ex['sets'],
+                    'target_reps' => $ex['reps'],
+                ]);
+            }
+        }
+
+        // 4. FULL BODY SCHEMA
+        $fullBodyTemplate = WorkoutSchema::create([
+            'user_id' => $trainer->id,
+            'name' => 'Full Body Workout',
+            'description' => 'De perfecte training waarbij je hele lichaam in 1 sessie wordt aangepakt.',
+            'difficulty' => 'beginner',
+            'category' => 'fullbody',
+            'goal' => 'general',
+            'is_template' => true,
+        ]);
+
+        $fullBodyExercises = [
+            ['exercise' => $legs->where('name', 'Squat')->first(), 'sets' => 3, 'reps' => 10],
+            ['exercise' => $chest->where('name', 'Bench Press')->first(), 'sets' => 3, 'reps' => 10],
+            ['exercise' => $back->where('name', 'Lat Pulldown')->first(), 'sets' => 3, 'reps' => 10],
+            ['exercise' => $shoulders->where('name', 'Overhead Press')->first(), 'sets' => 3, 'reps' => 10],
+            ['exercise' => $core->where('name', 'Plank')->first(), 'sets' => 3, 'reps' => 60], // 60 rep stands for seconds here for simplicity
+        ];
+
+        foreach ($fullBodyExercises as $ex) {
+            if ($ex['exercise']) {
+                $fullBodyTemplate->schemaExercises()->create([
+                    'exercise_id' => $ex['exercise']->id,
+                    'target_sets' => $ex['sets'],
+                    'target_reps' => $ex['reps'],
+                ]);
+            }
+        }
+
+        // --- Toewijzen aan de Member ---
+        // We geven de member persoonlijke kopieën zodat ze direct op z'n dashboard staan
+        $templates = [$pushTemplate, $pullTemplate, $legsTemplate, $fullBodyTemplate];
+
+        foreach ($templates as $idx => $template) {
+            $assignedSchema = $template->replicate()->fill([
                 'user_id' => $member->id,
-                'name' => 'My First Assigned Workout',
-                'description' => 'This is a workout assigned by my trainer.',
-                'difficulty' => 'beginner',
                 'is_template' => false,
-                'source_schema_id' => $fullBody->id ?? null,
+                'source_schema_id' => $template->id,
+                'scheduled_at' => now()->addDays($idx), // Plan ze in op opeenvolgende dagen
             ]);
-            $memberSchema->schemaExercises()->create(['exercise_id' => Exercise::where('name', 'Squat')->first()->id, 'target_sets' => 3, 'target_reps' => 8]);
+            $assignedSchema->save();
+
+            foreach ($template->schemaExercises as $exercise) {
+                $assignedSchema->schemaExercises()->create($exercise->only(['exercise_id', 'target_sets', 'target_reps']));
+            }
         }
     }
 }

@@ -76,6 +76,11 @@ class User extends Authenticatable
 
     public function isTrainer(): bool
     {
-        return $this->role === 'trainer';
+        return in_array($this->role, ['trainer', 'admin']);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
     }
 }

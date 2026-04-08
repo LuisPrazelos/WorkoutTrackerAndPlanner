@@ -2,123 +2,172 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
         @include('partials.head')
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            .glass-header {
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+                background: rgba(255, 255, 255, 0.8);
+            }
+            .dark .glass-header {
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                background: rgba(9, 9, 11, 0.8);
+            }
+            .nav-item-active {
+                background: linear-gradient(to right, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+                border-bottom: 2px solid #6366f1;
+            }
+        </style>
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:header container class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
-            <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
+    <body class="min-h-screen bg-white dark:bg-zinc-950 antialiased text-zinc-900 dark:text-zinc-100 selection:bg-indigo-500/30 transition-colors duration-300">
+        <flux:header sticky class="glass-header z-50 h-16">
+            <div class="container mx-auto flex items-center h-full px-4 lg:px-8">
+                <!-- Mobile Logo (Always Visible) -->
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-3 group shrink-0" wire:navigate>
+                    <x-app-logo-icon class="size-7" />
+                    <span class="text-base font-black tracking-tighter font-heading group-hover:text-indigo-400 transition-colors uppercase italic hidden sm:block">
+                        {{ config('app.name') }}
+                    </span>
+                </a>
 
-            <a href="{{ route('dashboard') }}" class="ms-2 me-5 flex items-center space-x-2 rtl:space-x-reverse lg:ms-0" wire:navigate>
-                <x-app-logo />
-            </a>
+                <flux:spacer />
 
-            <flux:navbar class="-mb-px max-lg:hidden">
-                <flux:navbar.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                    {{ __('Dashboard') }}
-                </flux:navbar.item>
-            </flux:navbar>
+                <!-- Desktop Navigation -->
+                <nav class="hidden lg:flex items-center gap-1">
+                    <flux:navbar class="gap-1">
+                        <flux:navbar.item :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>Dashboard</flux:navbar.item>
+                        <flux:navbar.item :href="route('agenda')" :current="request()->routeIs('agenda')" wire:navigate>Agenda</flux:navbar.item>
+                        <flux:navbar.item :href="route('schemas.index')" :current="request()->routeIs('schemas.index')" wire:navigate>Bibliotheek</flux:navbar.item>
+                        <flux:navbar.item :href="route('workout-log')" :current="request()->routeIs('workout-log')" wire:navigate>Logboek</flux:navbar.item>
+                        <flux:navbar.item :href="route('stats')" :current="request()->routeIs('stats')" wire:navigate>Stats</flux:navbar.item>
+                        
+                        @if(Auth::user()->isAdmin())
+                            <flux:navbar.item :href="route('admin.users')" :current="request()->routeIs('admin.users')" class="text-cyan-400 font-bold" wire:navigate>Admin</flux:navbar.item>
+                        @endif
+                    </flux:navbar>
 
-            <flux:spacer />
+                    <div class="h-4 w-px bg-zinc-200 dark:bg-zinc-800 mx-4"></div>
+                    
+                    <a href="{{ route('workout-schemas.create') }}" 
+                       class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-vibrant rounded-xl hover:shadow-lg hover:shadow-cyan-500/20 active:scale-95 whitespace-nowrap" 
+                       wire:navigate>
+                        <flux:icon name="plus" class="size-4" />
+                        <span>Nieuw Schema</span>
+                    </a>
+                </nav>
 
-            <flux:navbar class="me-1.5 space-x-0.5 rtl:space-x-reverse py-0!">
-                <flux:tooltip :content="__('Search')" position="bottom">
-                    <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="magnifying-glass" href="#" :label="__('Search')" />
-                </flux:tooltip>
-                <flux:tooltip :content="__('Repository')" position="bottom">
-                    <flux:navbar.item
-                        class="h-10 max-lg:hidden [&>div>svg]:size-5"
-                        icon="folder-git-2"
-                        href="https://github.com/laravel/livewire-starter-kit"
-                        target="_blank"
-                        :label="__('Repository')"
-                    />
-                </flux:tooltip>
-                <flux:tooltip :content="__('Documentation')" position="bottom">
-                    <flux:navbar.item
-                        class="h-10 max-lg:hidden [&>div>svg]:size-5"
-                        icon="book-open-text"
-                        href="https://laravel.com/docs/starter-kits#livewire"
-                        target="_blank"
-                        label="Documentation"
-                    />
-                </flux:tooltip>
-            </flux:navbar>
+                <flux:spacer class="hidden lg:block" />
 
-            <!-- Desktop User Menu -->
-            <flux:dropdown position="top" align="end">
-                <flux:profile
-                    class="cursor-pointer"
-                    :initials="auth()->user()->initials()"
-                />
+                <div class="flex items-center gap-3 shrink-0">
+                    <!-- Theme Toggle -->
+                    <button id="theme-toggle-header" type="button" class="p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
+                        <flux:icon name="moon" class="size-5 block dark:hidden" />
+                        <flux:icon name="sun" class="size-5 hidden dark:block" />
+                    </button>
 
-                <flux:menu>
-                    <flux:menu.radio.group>
-                        <div class="p-0 text-sm font-normal">
-                            <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                                <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-                                    <span
-                                        class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
-                                    >
-                                        {{ auth()->user()->initials() }}
-                                    </span>
-                                </span>
+                    <div class="h-4 w-px bg-zinc-200 dark:bg-zinc-800 mx-1"></div>
 
-                                <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                                    <span class="truncate text-xs">{{ auth()->user()->email }}</span>
-                                </div>
+                    <!-- User Menu -->
+                    <flux:dropdown position="bottom" align="end">
+                        <flux:profile
+                            class="cursor-pointer hover:opacity-80 transition-opacity"
+                            :initials="auth()->user()->initials()"
+                        />
+
+                        <flux:menu class="w-[240px]">
+                            <div class="px-3 py-2 border-b border-zinc-100 dark:border-zinc-800 mb-2">
+                                <p class="text-sm font-bold truncate">{{ auth()->user()->name }}</p>
+                                <p class="text-xs text-zinc-500 truncate">{{ auth()->user()->email }}</p>
                             </div>
-                        </div>
-                    </flux:menu.radio.group>
+                            
+                            <flux:menu.item :href="route('settings.profile')" icon="user-circle" wire:navigate>Profile Settings</flux:menu.item>
+                            <flux:menu.item :href="route('settings.appearance')" icon="swatch" wire:navigate>Appearance</flux:menu.item>
+                            <flux:menu.item :href="route('workout-schemas.create')" icon="plus-circle" wire:navigate class="lg:hidden text-indigo-500 font-medium">Nieuw Schema</flux:menu.item>
+                            
+                            @if(Auth::user()->isAdmin())
+                                <flux:menu.item :href="route('admin.users')" icon="shield-check" wire:navigate class="text-cyan-500 font-bold">Admin Hub</flux:menu.item>
+                            @endif
+                            
+                            <flux:menu.separator />
 
-                    <flux:menu.separator />
-
-                    <flux:menu.radio.group>
-                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
-                    </flux:menu.radio.group>
-
-                    <flux:menu.separator />
-
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
-                        @csrf
-                        <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
-                            {{ __('Log Out') }}
-                        </flux:menu.item>
-                    </form>
-                </flux:menu>
-            </flux:dropdown>
+                            <form method="POST" action="{{ route('logout') }}" class="w-full">
+                                @csrf
+                                <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="text-red-500 hover:text-red-600">
+                                    {{ __('Log Out') }}
+                                </flux:menu.item>
+                            </form>
+                        </flux:menu>
+                    </flux:dropdown>
+                </div>
+            </div>
         </flux:header>
 
-        <!-- Mobile Menu -->
-        <flux:sidebar stashable sticky class="lg:hidden border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
-            <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
+        <!-- Mobile Bottom Navigation (Tab Bar) -->
+        <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-50 glass-header border-t border-zinc-200 dark:border-zinc-800 px-4 pb-safe">
+            <div class="flex items-center justify-around h-16">
+                <a href="{{ route('dashboard') }}" class="flex flex-col items-center gap-1 {{ request()->routeIs('dashboard') ? 'text-indigo-500' : 'text-zinc-400' }}" wire:navigate>
+                    <flux:icon name="home" class="size-5" variant="{{ request()->routeIs('dashboard') ? 'solid' : 'outline' }}" />
+                    <span class="text-[10px] font-bold uppercase tracking-tighter">Home</span>
+                </a>
+                <a href="{{ route('agenda') }}" class="flex flex-col items-center gap-1 {{ request()->routeIs('agenda') ? 'text-indigo-500' : 'text-zinc-400' }}" wire:navigate>
+                    <flux:icon name="calendar" class="size-5" variant="{{ request()->routeIs('agenda') ? 'solid' : 'outline' }}" />
+                    <span class="text-[10px] font-bold uppercase tracking-tighter">Agenda</span>
+                </a>
+                <a href="{{ route('stats') }}" class="flex flex-col items-center gap-1 {{ request()->routeIs('stats') ? 'text-indigo-500' : 'text-zinc-400' }}" wire:navigate>
+                    <flux:icon name="chart-bar" class="size-5" variant="{{ request()->routeIs('stats') ? 'solid' : 'outline' }}" />
+                    <span class="text-[10px] font-bold uppercase tracking-tighter">Stats</span>
+                </a>
+                <a href="{{ route('schemas.index') }}" class="flex flex-col items-center gap-1 {{ request()->routeIs('schemas.index') ? 'text-indigo-500' : 'text-zinc-400' }}" wire:navigate>
+                    <flux:icon name="book-open" class="size-5" variant="{{ request()->routeIs('schemas.index') ? 'solid' : 'outline' }}" />
+                    <span class="text-[10px] font-bold uppercase tracking-tighter">Library</span>
+                </a>
+                <a href="{{ route('workout-log') }}" class="flex flex-col items-center gap-1 {{ request()->routeIs('workout-log') ? 'text-indigo-500' : 'text-zinc-400' }}" wire:navigate>
+                    <flux:icon name="clipboard-document-list" class="size-5" variant="{{ request()->routeIs('workout-log') ? 'solid' : 'outline' }}" />
+                    <span class="text-[10px] font-bold uppercase tracking-tighter">Logs</span>
+                </a>
+            </div>
+        </nav>
 
-            <a href="{{ route('dashboard') }}" class="ms-1 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
-                <x-app-logo />
-            </a>
-
-            <flux:navlist variant="outline">
-                <flux:navlist.group :heading="__('Platform')">
-                    <flux:navlist.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                      {{ __('Dashboard') }}
-                    </flux:navlist.item>
-                </flux:navlist.group>
-            </flux:navlist>
-
-            <flux:spacer />
-
-            <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    {{ __('Repository') }}
-                </flux:navlist.item>
-
-                <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
-                </flux:navlist.item>
-            </flux:navlist>
-        </flux:sidebar>
-
-        {{ $slot }}
+        <main class="container mx-auto px-4 lg:px-8 py-8 mb-20 lg:mb-0">
+            {{ $slot }}
+        </main>
 
         @fluxScripts
+        <script>
+            function initTheme() {
+                const themeToggleBtn = document.getElementById('theme-toggle-header');
+                if (!themeToggleBtn) return;
+                
+                const applyTheme = (theme) => {
+                    if (theme === 'dark') {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                };
+
+                // Using a new key to reset everyone to the new default dark mode
+                const themeKey = 'workout_tracker_theme_v2';
+                const currentTheme = localStorage.getItem(themeKey) || 'dark';
+                applyTheme(currentTheme);
+
+                // Remove existing listener to avoid duplicates if script runs multiple times
+                themeToggleBtn.replaceWith(themeToggleBtn.cloneNode(true));
+                const newBtn = document.getElementById('theme-toggle-header');
+
+                newBtn.addEventListener('click', () => {
+                    const isDark = document.documentElement.classList.contains('dark');
+                    const newTheme = isDark ? 'light' : 'dark';
+                    localStorage.setItem(themeKey, newTheme);
+                    applyTheme(newTheme);
+                });
+            }
+
+            // Run on initial load
+            initTheme();
+            // Run on every Livewire navigation
+            document.addEventListener('livewire:navigated', initTheme);
+        </script>
     </body>
 </html>

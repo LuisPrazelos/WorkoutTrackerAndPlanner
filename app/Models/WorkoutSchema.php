@@ -21,9 +21,15 @@ class WorkoutSchema extends Model
         'name',
         'description',
         'difficulty',
+        'category',
+        'goal',
         'scheduled_at',
         'is_template',
+        'is_active',
+        'active_started_at',
         'source_schema_id',
+        'is_public',
+        'share_token',
     ];
 
     /**
@@ -34,7 +40,22 @@ class WorkoutSchema extends Model
     protected $casts = [
         'scheduled_at' => 'date',
         'is_template' => 'boolean',
+        'is_active' => 'boolean',
+        'active_started_at' => 'datetime',
+        'is_public' => 'boolean',
     ];
+
+    /**
+     * Boot the model.
+     */
+    protected static function booted()
+    {
+        static::creating(function ($schema) {
+            if (empty($schema->share_token)) {
+                $schema->share_token = \Illuminate\Support\Str::random(64);
+            }
+        });
+    }
 
     /**
      * De gebruiker waartoe dit schema behoort.
