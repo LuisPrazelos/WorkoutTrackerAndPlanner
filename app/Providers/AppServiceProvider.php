@@ -6,12 +6,17 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+    protected function runningOnVercel(): bool
+    {
+        return (bool) (env('VERCEL') ?: env('VERCEL_URL') ?: getenv('VERCEL') ?: getenv('VERCEL_URL'));
+    }
+
     /**
      * Register any application services.
      */
     public function register(): void
     {
-        if (isset($_SERVER['VERCEL_URL'])) {
+        if ($this->runningOnVercel()) {
             $this->app->useStoragePath('/tmp/storage');
         }
     }
@@ -21,13 +26,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (isset($_SERVER['VERCEL_URL'])) {
-            $storagePath = '/tmp/storage/framework';
-            foreach (['views', 'sessions', 'cache'] as $path) {
-                if (!is_dir($storagePath . '/' . $path)) {
-                    mkdir($storagePath . '/' . $path, 0755, true);
+        if ($this->runningOnVercel()) {
+            foreach ([
+                '/tmp/storage/app',
+                '/tmp/storage/framework/cache/data',
+                '/tmp/storage/framework/sessions',
+                '/tmp/storage/framework/testing',
+                '/tmp/storage/framework/views',
+                '/tmp/storage/logs',
+            ] as $path) {
+                if (!is_dir($path)) {
+                    mkdir($path, 0755, true);
                 }
             }
-        } 
+        }
     }
 }
