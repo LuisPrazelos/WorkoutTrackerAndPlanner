@@ -2,11 +2,10 @@
 
 namespace App\Livewire\Auth;
 
-use Throwable;
 use App\Models\User;
+use Throwable;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
@@ -57,12 +56,8 @@ class Login extends Component
 
             $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
         } catch (Throwable $e) {
-            Log::error('Livewire login failed', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'exception' => $e::class,
-            ]);
+            error_log('LIVEWIRE_LOGIN_FAILED: ' . $e::class . ': ' . $e->getMessage());
+            error_log('LIVEWIRE_LOGIN_FAILED_FILE: ' . $e->getFile() . ':' . $e->getLine());
 
             throw $e;
         }

@@ -2,12 +2,11 @@
 
 namespace App\Livewire\Auth;
 
-use Throwable;
 use App\Models\User;
+use Throwable;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -43,12 +42,8 @@ class Register extends Component
 
             $this->redirect(route('dashboard', absolute: false), navigate: true);
         } catch (Throwable $e) {
-            Log::error('Livewire registration failed', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'exception' => $e::class,
-            ]);
+            error_log('LIVEWIRE_REGISTRATION_FAILED: ' . $e::class . ': ' . $e->getMessage());
+            error_log('LIVEWIRE_REGISTRATION_FAILED_FILE: ' . $e->getFile() . ':' . $e->getLine());
 
             throw $e;
         }
