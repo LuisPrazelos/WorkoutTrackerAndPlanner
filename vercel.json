@@ -15,6 +15,10 @@
             "dest": "/public/favicon.svg"
         },
         {
+            "src": "/favicon.ico",
+            "dest": "/public/favicon.svg"
+        },
+        {
             "src": "/apple-touch-icon.png",
             "dest": "/public/apple-touch-icon.png"
         },

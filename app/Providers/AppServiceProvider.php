@@ -28,6 +28,6 @@ class AppServiceProvider extends ServiceProvider
                     mkdir($storagePath . '/' . $path, 0755, true);
                 }
             }
-        }
+        } 
     }
 }
