@@ -61,6 +61,16 @@ class CreateWorkoutSchema extends Component
     {
         $this->validate();
 
+        $selectedExercises = collect($this->selectedExercises)
+            ->filter(fn ($exercise) => ! empty($exercise['exercise_id']))
+            ->values();
+
+        if ($selectedExercises->isEmpty()) {
+            $this->addError('selectedExercises', 'Voeg minstens 1 oefening toe aan je schema.');
+
+            return;
+        }
+
         $user = Auth::user();
         
         $schema = WorkoutSchema::create([
@@ -75,15 +85,13 @@ class CreateWorkoutSchema extends Component
             'scheduled_at'=> null,
         ]);
 
-        foreach ($this->selectedExercises as $exerciseData) {
-            if (!empty($exerciseData['exercise_id'])) {
-                SchemaExercise::create([
-                    'workout_schema_id' => $schema->id,
-                    'exercise_id'       => $exerciseData['exercise_id'],
-                    'target_sets'       => $exerciseData['target_sets'] ?: null,
-                    'target_reps'       => $exerciseData['target_reps'] ?: null,
-                ]);
-            }
+        foreach ($selectedExercises as $exerciseData) {
+            SchemaExercise::create([
+                'workout_schema_id' => $schema->id,
+                'exercise_id'       => $exerciseData['exercise_id'],
+                'target_sets'       => $exerciseData['target_sets'] ?: null,
+                'target_reps'       => $exerciseData['target_reps'] ?: null,
+            ]);
         }
 
         if ($user->isTrainer() && $this->selectedTraineeId !== '') {

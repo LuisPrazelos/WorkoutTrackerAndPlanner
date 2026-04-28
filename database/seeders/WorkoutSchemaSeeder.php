@@ -42,15 +42,20 @@ class WorkoutSchemaSeeder extends Seeder
         $core = Exercise::where('muscle_group', 'core')->get();
 
         // 1. PUSH SCHEMA
-        $pushTemplate = WorkoutSchema::create([
-            'user_id' => $trainer->id,
-            'name' => 'Push Day (Borst, Schouders, Triceps)',
-            'description' => 'Focus op de duwspieren. Ideaal om kracht en massa op te bouwen in het bovenlichaam.',
-            'difficulty' => 'intermediate',
-            'category' => 'push',
-            'goal' => 'muscle_gain',
-            'is_template' => true,
-        ]);
+        $pushTemplate = WorkoutSchema::updateOrCreate(
+            [
+                'user_id' => $trainer->id,
+                'name' => 'Push Day (Borst, Schouders, Triceps)',
+                'is_template' => true,
+            ],
+            [
+                'description' => 'Focus op de duwspieren. Ideaal om kracht en massa op te bouwen in het bovenlichaam.',
+                'difficulty' => 'intermediate',
+                'category' => 'push',
+                'goal' => 'muscle_gain',
+                'is_public' => true,
+            ]
+        );
 
         $pushExercises = [
             ['exercise' => $chest->where('name', 'Bench Press')->first(), 'sets' => 4, 'reps' => 8],
@@ -60,26 +65,23 @@ class WorkoutSchemaSeeder extends Seeder
             ['exercise' => $triceps->where('name', 'Tricep Pushdown')->first(), 'sets' => 3, 'reps' => 12],
         ];
 
-        foreach ($pushExercises as $ex) {
-            if ($ex['exercise']) {
-                $pushTemplate->schemaExercises()->create([
-                    'exercise_id' => $ex['exercise']->id,
-                    'target_sets' => $ex['sets'],
-                    'target_reps' => $ex['reps'],
-                ]);
-            }
-        }
+        $this->syncTemplateExercises($pushTemplate, $pushExercises);
 
         // 2. PULL SCHEMA
-        $pullTemplate = WorkoutSchema::create([
-            'user_id' => $trainer->id,
-            'name' => 'Pull Day (Rug, Biceps)',
-            'description' => 'Focus op de trekspieren. Voor een een indrukwekkende V-taper en sterke armen.',
-            'difficulty' => 'intermediate',
-            'category' => 'pull',
-            'goal' => 'muscle_gain',
-            'is_template' => true,
-        ]);
+        $pullTemplate = WorkoutSchema::updateOrCreate(
+            [
+                'user_id' => $trainer->id,
+                'name' => 'Pull Day (Rug, Biceps)',
+                'is_template' => true,
+            ],
+            [
+                'description' => 'Focus op de trekspieren. Voor een een indrukwekkende V-taper en sterke armen.',
+                'difficulty' => 'intermediate',
+                'category' => 'pull',
+                'goal' => 'muscle_gain',
+                'is_public' => true,
+            ]
+        );
 
         $pullExercises = [
             ['exercise' => $back->where('name', 'Deadlift')->first(), 'sets' => 4, 'reps' => 5],
@@ -89,26 +91,23 @@ class WorkoutSchemaSeeder extends Seeder
             ['exercise' => $biceps->where('name', 'Hammer Curl')->first(), 'sets' => 3, 'reps' => 12],
         ];
 
-        foreach ($pullExercises as $ex) {
-            if ($ex['exercise']) {
-                $pullTemplate->schemaExercises()->create([
-                    'exercise_id' => $ex['exercise']->id,
-                    'target_sets' => $ex['sets'],
-                    'target_reps' => $ex['reps'],
-                ]);
-            }
-        }
+        $this->syncTemplateExercises($pullTemplate, $pullExercises);
 
         // 3. LEGS SCHEMA
-        $legsTemplate = WorkoutSchema::create([
-            'user_id' => $trainer->id,
-            'name' => 'Leg Day (Quads, Hams, Kuiten)',
-            'description' => 'Sla noot leg day over. Dit schema richt zich op maximale beenontwikkeling.',
-            'difficulty' => 'intermediate',
-            'category' => 'legs',
-            'goal' => 'strength',
-            'is_template' => true,
-        ]);
+        $legsTemplate = WorkoutSchema::updateOrCreate(
+            [
+                'user_id' => $trainer->id,
+                'name' => 'Leg Day (Quads, Hams, Kuiten)',
+                'is_template' => true,
+            ],
+            [
+                'description' => 'Sla noot leg day over. Dit schema richt zich op maximale beenontwikkeling.',
+                'difficulty' => 'intermediate',
+                'category' => 'legs',
+                'goal' => 'strength',
+                'is_public' => true,
+            ]
+        );
 
         $legsExercises = [
             ['exercise' => $legs->where('name', 'Squat')->first(), 'sets' => 4, 'reps' => 6],
@@ -118,26 +117,23 @@ class WorkoutSchemaSeeder extends Seeder
             ['exercise' => $legs->where('name', 'Calf Raise')->first(), 'sets' => 4, 'reps' => 15],
         ];
 
-        foreach ($legsExercises as $ex) {
-            if ($ex['exercise']) {
-                $legsTemplate->schemaExercises()->create([
-                    'exercise_id' => $ex['exercise']->id,
-                    'target_sets' => $ex['sets'],
-                    'target_reps' => $ex['reps'],
-                ]);
-            }
-        }
+        $this->syncTemplateExercises($legsTemplate, $legsExercises);
 
         // 4. FULL BODY SCHEMA
-        $fullBodyTemplate = WorkoutSchema::create([
-            'user_id' => $trainer->id,
-            'name' => 'Full Body Workout',
-            'description' => 'De perfecte training waarbij je hele lichaam in 1 sessie wordt aangepakt.',
-            'difficulty' => 'beginner',
-            'category' => 'fullbody',
-            'goal' => 'general',
-            'is_template' => true,
-        ]);
+        $fullBodyTemplate = WorkoutSchema::updateOrCreate(
+            [
+                'user_id' => $trainer->id,
+                'name' => 'Full Body Workout',
+                'is_template' => true,
+            ],
+            [
+                'description' => 'De perfecte training waarbij je hele lichaam in 1 sessie wordt aangepakt.',
+                'difficulty' => 'beginner',
+                'category' => 'fullbody',
+                'goal' => 'general',
+                'is_public' => true,
+            ]
+        );
 
         $fullBodyExercises = [
             ['exercise' => $legs->where('name', 'Squat')->first(), 'sets' => 3, 'reps' => 10],
@@ -147,15 +143,7 @@ class WorkoutSchemaSeeder extends Seeder
             ['exercise' => $core->where('name', 'Plank')->first(), 'sets' => 3, 'reps' => 60],
         ];
 
-        foreach ($fullBodyExercises as $ex) {
-            if ($ex['exercise']) {
-                $fullBodyTemplate->schemaExercises()->create([
-                    'exercise_id' => $ex['exercise']->id,
-                    'target_sets' => $ex['sets'],
-                    'target_reps' => $ex['reps'],
-                ]);
-            }
-        }
+        $this->syncTemplateExercises($fullBodyTemplate, $fullBodyExercises);
 
         // Geef persoonlijke kopieen aan gebruikers zodat ze direct op hun dashboard staan
         $templates = [$pushTemplate, $pullTemplate, $legsTemplate, $fullBodyTemplate];
@@ -167,6 +155,23 @@ class WorkoutSchemaSeeder extends Seeder
                     'scheduled_at' => now()->addDays($idx),
                 ]);
             }
+        }
+    }
+
+    private function syncTemplateExercises(WorkoutSchema $template, array $templateExercises): void
+    {
+        $template->schemaExercises()->delete();
+
+        foreach ($templateExercises as $exerciseData) {
+            if (! $exerciseData['exercise']) {
+                continue;
+            }
+
+            $template->schemaExercises()->create([
+                'exercise_id' => $exerciseData['exercise']->id,
+                'target_sets' => $exerciseData['sets'],
+                'target_reps' => $exerciseData['reps'],
+            ]);
         }
     }
 }

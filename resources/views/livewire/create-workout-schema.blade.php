@@ -129,6 +129,10 @@
                         @endforelse
                     </div>
 
+                    @error('selectedExercises')
+                        <p class="mt-3 text-sm font-medium text-red-500">{{ $message }}</p>
+                    @enderror
+
                     <div class="mt-8 flex justify-end gap-3">
                         <flux:button type="button" wire:click="cancel" variant="subtle">Annuleren</flux:button>
                         <flux:button type="submit" variant="primary" icon="check" class="px-8">
