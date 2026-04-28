@@ -97,25 +97,31 @@
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 const themeToggleBtn = document.getElementById('theme-toggle');
+                const themeKey = 'workout_tracker_theme_v2';
+                if (!themeToggleBtn) return;
 
-                // Function to apply theme
                 const applyTheme = (theme) => {
+                    document.documentElement.classList.add('theme-transition');
+
                     if (theme === 'dark') {
                         document.documentElement.classList.add('dark');
                     } else {
                         document.documentElement.classList.remove('dark');
                     }
+
+                    window.clearTimeout(window.__themeTransitionTimeout);
+                    window.__themeTransitionTimeout = window.setTimeout(() => {
+                        document.documentElement.classList.remove('theme-transition');
+                    }, 275);
                 };
 
-                // Check for saved theme in localStorage or system preference
-                const currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                const currentTheme = localStorage.getItem(themeKey) || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
                 applyTheme(currentTheme);
 
-                // Handle button click
                 themeToggleBtn.addEventListener('click', () => {
                     const isDark = document.documentElement.classList.contains('dark');
                     const newTheme = isDark ? 'light' : 'dark';
-                    localStorage.setItem('theme', newTheme);
+                    localStorage.setItem(themeKey, newTheme);
                     applyTheme(newTheme);
                 });
             });

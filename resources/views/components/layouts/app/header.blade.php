@@ -174,17 +174,23 @@
             function initTheme() {
                 const themeToggleBtn = document.getElementById('theme-toggle-header');
                 if (!themeToggleBtn) return;
+                const themeKey = 'workout_tracker_theme_v2';
                 
                 const applyTheme = (theme) => {
+                    document.documentElement.classList.add('theme-transition');
+
                     if (theme === 'dark') {
                         document.documentElement.classList.add('dark');
                     } else {
                         document.documentElement.classList.remove('dark');
                     }
+
+                    window.clearTimeout(window.__themeTransitionTimeout);
+                    window.__themeTransitionTimeout = window.setTimeout(() => {
+                        document.documentElement.classList.remove('theme-transition');
+                    }, 275);
                 };
 
-                // Using a new key to reset everyone to the new default dark mode
-                const themeKey = 'workout_tracker_theme_v2';
                 const currentTheme = localStorage.getItem(themeKey) || 'dark';
                 applyTheme(currentTheme);
 
