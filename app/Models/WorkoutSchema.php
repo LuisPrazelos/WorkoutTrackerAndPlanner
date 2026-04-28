@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 class WorkoutSchema extends Model
 {
@@ -79,5 +80,50 @@ class WorkoutSchema extends Model
     public function schemaExercises(): HasMany
     {
         return $this->hasMany(SchemaExercise::class);
+    }
+
+    /**
+     * Maak een persoonlijke kopie van dit schema voor een gebruiker.
+     */
+    public function assignToUser(User $user, array $attributes = []): self
+    {
+        $existingSchema = static::where('user_id', $user->id)
+            ->where('source_schema_id', $this->id)
+            ->where('is_template', false)
+            ->first();
+
+        if ($existingSchema) {
+            return $existingSchema;
+        }
+
+        return DB::transaction(function () use ($user, $attributes) {
+            $assignedSchema = $this->replicate([
+                'share_token',
+                'is_active',
+                'active_started_at',
+                'is_template',
+                'is_public',
+            ])->fill(array_merge([
+                'user_id' => $user->id,
+                'is_template' => false,
+                'is_public' => false,
+                'is_active' => false,
+                'active_started_at' => null,
+                'source_schema_id' => $this->id,
+                'scheduled_at' => null,
+            ], $attributes));
+
+            $assignedSchema->save();
+
+            foreach ($this->schemaExercises as $exercise) {
+                $assignedSchema->schemaExercises()->create([
+                    'exercise_id' => $exercise->exercise_id,
+                    'target_sets' => $exercise->target_sets,
+                    'target_reps' => $exercise->target_reps,
+                ]);
+            }
+
+            return $assignedSchema;
+        });
     }
 }

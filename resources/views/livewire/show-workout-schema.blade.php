@@ -1,4 +1,13 @@
 <div class="p-6 space-y-8">
+    @if($actionMessage)
+        <div class="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-green-900 shadow-sm dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-100">
+            <div class="flex items-start gap-3">
+                <flux:icon name="check-circle" class="mt-0.5 h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
+                <p class="text-sm font-medium">{{ $actionMessage }}</p>
+            </div>
+        </div>
+    @endif
+
     <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
             <h1 class="text-4xl font-extrabold text-gradient tracking-tight">{{ $workoutSchema->name }}</h1>
@@ -64,6 +73,33 @@
             </div>
         </dl>
     </div>
+
+    @if($isOwnerTrainer && $workoutSchema->is_template)
+        <div class="glass-panel p-6 sm:p-8">
+            <div class="flex flex-col lg:flex-row lg:items-end gap-4">
+                <div class="flex-1">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Toewijzen aan trainee</h2>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Maak een persoonlijke kopie van deze template op het dashboard van een trainee.</p>
+                </div>
+                <div class="w-full lg:max-w-md">
+                    <flux:select wire:model="selectedTraineeId" label="Trainee">
+                        <option value="">Kies een trainee...</option>
+                        @foreach($trainees as $trainee)
+                            <option value="{{ $trainee->id }}">{{ $trainee->name }} ({{ $trainee->email }})</option>
+                        @endforeach
+                    </flux:select>
+                    @error('selectedTraineeId')
+                        <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <flux:button wire:click="assignToTrainee" variant="primary" icon="user-plus" class="w-full lg:w-auto">
+                        Toewijzen
+                    </flux:button>
+                </div>
+            </div>
+        </div>
+    @endif
 
     <div class="glass-panel p-6 sm:p-8 mt-8">
         <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Geplande Oefeningen</h2>

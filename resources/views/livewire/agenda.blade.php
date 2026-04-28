@@ -62,13 +62,13 @@
                         <div wire:click="selectDate('{{ $day['full'] }}')" 
                             id="drop-zone-{{ $day['full'] }}"
                             class="flex flex-col items-center justify-center p-3 md:p-4 rounded-2xl transition-all duration-300 relative border-2 w-full aspect-square md:aspect-auto cursor-pointer
-                                   {{ $day['isSelected'] ? 'bg-vibrant border-transparent shadow-[0_10px_30px_rgba(34,211,238,0.3)] scale-105 z-10 text-white' : 'bg-white dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800 hover:border-indigo-400/50' }}
+                                   {{ $day['isSelected'] ? 'bg-cyan-100 dark:bg-cyan-500/20 border-cyan-400 dark:border-cyan-400 shadow-[0_10px_30px_rgba(34,211,238,0.2)] scale-105 z-10 text-cyan-950 dark:text-white' : 'bg-white dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800 hover:border-indigo-400/50' }}
                                    {{ $day['isToday'] && !$day['isSelected'] ? 'border-cyan-400' : '' }}">
                             
-                            <span class="text-[9px] uppercase font-bold tracking-tighter mb-1 {{ $day['isSelected'] ? 'text-indigo-100' : 'text-zinc-400' }}">
+                            <span class="text-[9px] uppercase font-bold tracking-tighter mb-1 {{ $day['isSelected'] ? 'text-cyan-700 dark:text-cyan-200' : 'text-zinc-400' }}">
                                 {{ $day['name'] }}
                             </span>
-                            <span class="text-xl md:text-2xl font-black {{ $day['isSelected'] ? 'text-white' : 'text-zinc-900 dark:text-zinc-100' }}">
+                            <span class="text-xl md:text-2xl font-black {{ $day['isSelected'] ? 'text-cyan-950 dark:text-white' : 'text-zinc-900 dark:text-zinc-100' }}">
                                 {{ $day['day'] }}
                             </span>
 
@@ -111,7 +111,7 @@
                             </div>
                             <div class="flex items-center gap-2">
                                 <flux:button wire:click="unschedule({{ $workout->id }})" variant="subtle" size="xs" class="text-red-500" icon="x-mark" />
-                                <flux:button wire:click="$parent.activateSchema({{ $workout->id }})" variant="primary" size="sm" class="bg-vibrant border-none !text-white text-[11px] py-1.5" icon="play">Start</flux:button>
+                                <flux:button wire:click="$parent.activateSchema({{ $workout->id }})" variant="primary" size="sm" class="!bg-cyan-500 hover:!bg-cyan-400 dark:!bg-cyan-500 dark:hover:!bg-cyan-400 !border-cyan-500 dark:!border-cyan-500 !text-zinc-950 dark:!text-zinc-950 text-[11px] py-1.5 shadow-md shadow-cyan-500/20" icon="play">Start</flux:button>
                             </div>
                         </div>
                     </div>

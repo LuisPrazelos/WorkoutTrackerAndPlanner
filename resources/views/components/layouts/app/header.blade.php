@@ -130,6 +130,42 @@
         </nav>
 
         <main class="container mx-auto px-4 lg:px-8 py-8 mb-20 lg:mb-0">
+            @if (session('success'))
+                <div
+                    x-data="{ visible: true }"
+                    x-init="setTimeout(() => visible = false, 3500)"
+                    x-show="visible"
+                    x-transition.opacity.duration.250ms
+                    class="mb-6 flex items-start justify-between gap-3 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-green-900 shadow-sm dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-100"
+                >
+                    <div class="flex items-start gap-3">
+                        <flux:icon name="check-circle" class="mt-0.5 size-5 shrink-0 text-green-600 dark:text-green-400" />
+                        <p class="text-sm font-medium">{{ session('success') }}</p>
+                    </div>
+                    <button type="button" @click="visible = false" class="text-green-700 transition-colors hover:text-green-900 dark:text-green-300 dark:hover:text-white">
+                        <flux:icon name="x-mark" class="size-4" />
+                    </button>
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div
+                    x-data="{ visible: true }"
+                    x-init="setTimeout(() => visible = false, 4500)"
+                    x-show="visible"
+                    x-transition.opacity.duration.250ms
+                    class="mb-6 flex items-start justify-between gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-red-900 shadow-sm dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-100"
+                >
+                    <div class="flex items-start gap-3">
+                        <flux:icon name="exclamation-circle" class="mt-0.5 size-5 shrink-0 text-red-600 dark:text-red-400" />
+                        <p class="text-sm font-medium">{{ session('error') }}</p>
+                    </div>
+                    <button type="button" @click="visible = false" class="text-red-700 transition-colors hover:text-red-900 dark:text-red-300 dark:hover:text-white">
+                        <flux:icon name="x-mark" class="size-4" />
+                    </button>
+                </div>
+            @endif
+
             {{ $slot }}
         </main>
 

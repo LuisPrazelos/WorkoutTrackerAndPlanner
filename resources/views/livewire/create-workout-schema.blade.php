@@ -50,6 +50,18 @@
                                 <flux:switch wire:model="is_public" color="indigo" />
                             </div>
                         </div>
+
+                        <div class="pt-4 border-t border-gray-100 dark:border-zinc-800">
+                            <flux:select label="Wijs toe aan trainee" wire:model="selectedTraineeId">
+                                <option value="">Alleen als template opslaan</option>
+                                @foreach($trainees as $trainee)
+                                    <option value="{{ $trainee->id }}">{{ $trainee->name }} ({{ $trainee->email }})</option>
+                                @endforeach
+                            </flux:select>
+                            <p class="mt-2 text-[11px] text-gray-500 dark:text-gray-400">
+                                Kies een trainee om direct een persoonlijke kopie op hun dashboard te zetten.
+                            </p>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -120,7 +132,7 @@
                     <div class="mt-8 flex justify-end gap-3">
                         <flux:button type="button" wire:click="cancel" variant="subtle">Annuleren</flux:button>
                         <flux:button type="submit" variant="primary" icon="check" class="px-8">
-                            {{ Auth::user()->isTrainer() ? 'Template Publiceren' : 'Schema Opslaan' }}
+                            {{ Auth::user()->isTrainer() ? ($selectedTraineeId !== '' ? 'Opslaan en Toewijzen' : 'Template Publiceren') : 'Schema Opslaan' }}
                         </flux:button>
                     </div>
                 </div>
@@ -128,4 +140,3 @@
         </div>
     </form>
 </div>
-

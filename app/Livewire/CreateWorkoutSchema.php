@@ -4,6 +4,7 @@ namespace App\Livewire;
 use App\Models\WorkoutSchema;
 use App\Models\Exercise;
 use App\Models\SchemaExercise;
+use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,6 +17,7 @@ class CreateWorkoutSchema extends Component
     public string $goal = 'general';
     public $scheduled_at = '';
     public bool $is_public = false;
+    public string $selectedTraineeId = '';
 
     // For adding exercises dynamically
     public $selectedExercises = []; // Array of ['exercise_id', 'target_sets', 'target_reps']
@@ -27,6 +29,7 @@ class CreateWorkoutSchema extends Component
         'category'     => 'required|in:general,push,pull,legs,cardio,fullbody,upper,lower',
         'goal'         => 'required|in:general,strength,endurance,weight_loss,muscle_gain',
         'scheduled_at' => 'nullable|date',
+        'selectedTraineeId' => 'nullable|exists:users,id',
         'selectedExercises.*.exercise_id' => 'required|exists:exercises,id',
         'selectedExercises.*.target_sets' => 'nullable|integer|min:1',
         'selectedExercises.*.target_reps' => 'nullable|integer|min:1',
@@ -83,8 +86,22 @@ class CreateWorkoutSchema extends Component
             }
         }
 
-        $this->reset(['name', 'description', 'difficulty', 'category', 'goal', 'scheduled_at', 'selectedExercises']);
-        session()->flash('success', 'Schema succesvol opgeslagen.');
+        if ($user->isTrainer() && $this->selectedTraineeId !== '') {
+            $trainee = User::whereKey($this->selectedTraineeId)
+                ->where('role', 'member')
+                ->first();
+
+            if ($trainee) {
+                $schema->assignToUser($trainee);
+                session()->flash('success', 'Template opgeslagen en toegewezen aan ' . $trainee->name . '.');
+            } else {
+                session()->flash('success', 'Template succesvol opgeslagen.');
+            }
+        } else {
+            session()->flash('success', 'Schema succesvol opgeslagen.');
+        }
+
+        $this->reset(['name', 'description', 'difficulty', 'category', 'goal', 'scheduled_at', 'selectedExercises', 'is_public', 'selectedTraineeId']);
         $this->redirect(route('dashboard'), navigate: true);
     }
 
@@ -97,6 +114,7 @@ class CreateWorkoutSchema extends Component
     {
         return view('livewire.create-workout-schema', [
             'exercises' => Exercise::orderBy('name')->get(),
+            'trainees' => User::where('role', 'member')->orderBy('name')->get(),
         ])
         ->layout('components.layouts.app', ['title' => 'New Template']);
     }

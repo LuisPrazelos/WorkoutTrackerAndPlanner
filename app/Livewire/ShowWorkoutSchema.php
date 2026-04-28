@@ -5,14 +5,16 @@ use App\Models\WorkoutSchema;
 use App\Models\Exercise;
 use App\Models\ExerciseLog;
 use App\Models\SchemaExercise;
+use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\DB;
 
 class ShowWorkoutSchema extends Component
 {
     public WorkoutSchema $workoutSchema;
+    public string $selectedTraineeId = '';
+    public ?string $actionMessage = null;
 
     // This will hold the member's input for each planned exercise
     public $logs = [];
@@ -120,30 +122,53 @@ class ShowWorkoutSchema extends Component
             return;
         }
 
-        DB::transaction(function () {
-            // Replicate the schema for the current user
-            $newSchema = $this->workoutSchema->replicate([
-                'user_id', 'share_token', 'is_active', 'active_started_at', 'is_template'
-            ]);
-            
-            $newSchema->user_id = Auth::id();
-            $newSchema->is_template = false; // Personal copy
-            $newSchema->is_active = false;
-            $newSchema->active_started_at = null;
-            $newSchema->save(); // Generates new share_token
+        $assignedSchema = $this->workoutSchema->assignToUser(Auth::user());
 
-            // Copy the planned exercises
-            foreach ($this->workoutSchema->schemaExercises as $exercise) {
-                $newSchema->schemaExercises()->create([
-                    'exercise_id' => $exercise->exercise_id,
-                    'target_sets' => $exercise->target_sets,
-                    'target_reps' => $exercise->target_reps,
-                ]);
-            }
-        });
+        session()->flash(
+            'success',
+            $assignedSchema->wasRecentlyCreated
+                ? 'Schema toegevoegd aan je dashboard!'
+                : 'Dit schema stond al op je dashboard.'
+        );
 
-        session()->flash('success', 'Schema toegevoegd aan je dashboard!');
-        return redirect()->route('dashboard');
+        $this->actionMessage = $assignedSchema->wasRecentlyCreated
+            ? 'Schema succesvol toegevoegd aan je dashboard.'
+            : 'Dit schema stond al op je dashboard.';
+    }
+
+    public function assignToTrainee()
+    {
+        if (!Auth::user()->isTrainer() || $this->workoutSchema->user_id !== Auth::id() || !$this->workoutSchema->is_template) {
+            return;
+        }
+
+        $this->validate([
+            'selectedTraineeId' => 'required|exists:users,id',
+        ]);
+
+        $trainee = User::whereKey($this->selectedTraineeId)
+            ->where('role', 'member')
+            ->first();
+
+        if (!$trainee) {
+            $this->addError('selectedTraineeId', 'Kies een geldige trainee.');
+            return;
+        }
+
+        $assignedSchema = $this->workoutSchema->assignToUser($trainee);
+
+        session()->flash(
+            'success',
+            $assignedSchema->wasRecentlyCreated
+                ? 'Schema toegewezen aan ' . $trainee->name . '.'
+                : $trainee->name . ' heeft dit schema al op het dashboard.'
+        );
+
+        $this->actionMessage = $assignedSchema->wasRecentlyCreated
+            ? 'Schema succesvol verstuurd naar ' . $trainee->name . '.'
+            : $trainee->name . ' had dit schema al ontvangen.';
+
+        $this->selectedTraineeId = '';
     }
 
     public function render()
@@ -155,6 +180,7 @@ class ShowWorkoutSchema extends Component
             'exercises' => Exercise::orderBy('name')->get(),
             'isMemberView' => $isMemberView,
             'isOwnerTrainer' => $isOwnerTrainer,
+            'trainees' => User::where('role', 'member')->orderBy('name')->get(),
         ])
         ->layout('components.layouts.app', ['title' => $this->workoutSchema->name]);
     }

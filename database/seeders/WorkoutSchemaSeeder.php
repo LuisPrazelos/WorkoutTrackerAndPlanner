@@ -25,6 +25,13 @@ class WorkoutSchemaSeeder extends Seeder
             'role' => 'member',
         ]);
 
+        // Haal of maak een admin
+        $admin = User::where('role', 'admin')->first() ?? User::factory()->create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'role' => 'admin',
+        ]);
+
         // Haal oefeningen op per categorie
         $chest = Exercise::where('muscle_group', 'chest')->get();
         $shoulders = Exercise::where('muscle_group', 'shoulders')->get();
@@ -137,7 +144,7 @@ class WorkoutSchemaSeeder extends Seeder
             ['exercise' => $chest->where('name', 'Bench Press')->first(), 'sets' => 3, 'reps' => 10],
             ['exercise' => $back->where('name', 'Lat Pulldown')->first(), 'sets' => 3, 'reps' => 10],
             ['exercise' => $shoulders->where('name', 'Overhead Press')->first(), 'sets' => 3, 'reps' => 10],
-            ['exercise' => $core->where('name', 'Plank')->first(), 'sets' => 3, 'reps' => 60], // 60 rep stands for seconds here for simplicity
+            ['exercise' => $core->where('name', 'Plank')->first(), 'sets' => 3, 'reps' => 60],
         ];
 
         foreach ($fullBodyExercises as $ex) {
@@ -150,21 +157,15 @@ class WorkoutSchemaSeeder extends Seeder
             }
         }
 
-        // --- Toewijzen aan de Member ---
-        // We geven de member persoonlijke kopieën zodat ze direct op z'n dashboard staan
+        // Geef persoonlijke kopieen aan gebruikers zodat ze direct op hun dashboard staan
         $templates = [$pushTemplate, $pullTemplate, $legsTemplate, $fullBodyTemplate];
 
-        foreach ($templates as $idx => $template) {
-            $assignedSchema = $template->replicate()->fill([
-                'user_id' => $member->id,
-                'is_template' => false,
-                'source_schema_id' => $template->id,
-                'scheduled_at' => now()->addDays($idx), // Plan ze in op opeenvolgende dagen
-            ]);
-            $assignedSchema->save();
-
-            foreach ($template->schemaExercises as $exercise) {
-                $assignedSchema->schemaExercises()->create($exercise->only(['exercise_id', 'target_sets', 'target_reps']));
+        foreach ([$trainer, $member, $admin] as $dashboardUser) {
+            foreach ($templates as $idx => $template) {
+                $template->loadMissing('schemaExercises');
+                $template->assignToUser($dashboardUser, [
+                    'scheduled_at' => now()->addDays($idx),
+                ]);
             }
         }
     }
