@@ -3,6 +3,7 @@
 namespace App\Livewire\Auth;
 
 use App\Models\User;
+use Throwable;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -30,29 +31,36 @@ class Login extends Component
      */
     public function login(): void
     {
-        $this->validate();
+        try {
+            $this->validate();
 
-        $this->ensureIsNotRateLimited();
+            $this->ensureIsNotRateLimited();
 
-        $user = $this->validateCredentials();
+            $user = $this->validateCredentials();
 
-        if (Features::canManageTwoFactorAuthentication() && $user->hasEnabledTwoFactorAuthentication()) {
-            Session::put([
-                'login.id' => $user->getKey(),
-                'login.remember' => $this->remember,
-            ]);
+            if (Features::canManageTwoFactorAuthentication() && $user->hasEnabledTwoFactorAuthentication()) {
+                Session::put([
+                    'login.id' => $user->getKey(),
+                    'login.remember' => $this->remember,
+                ]);
 
-            $this->redirect(route('two-factor.login'), navigate: true);
+                $this->redirect(route('two-factor.login'), navigate: true);
 
-            return;
+                return;
+            }
+
+            Auth::login($user, $this->remember);
+
+            RateLimiter::clear($this->throttleKey());
+            Session::regenerate();
+
+            $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+        } catch (Throwable $e) {
+            error_log('LIVEWIRE_LOGIN_FAILED: ' . $e::class . ': ' . $e->getMessage());
+            error_log('LIVEWIRE_LOGIN_FAILED_FILE: ' . $e->getFile() . ':' . $e->getLine());
+
+            throw $e;
         }
-
-        Auth::login($user, $this->remember);
-
-        RateLimiter::clear($this->throttleKey());
-        Session::regenerate();
-
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
     }
 
     /**
