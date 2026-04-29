@@ -1,12 +1,12 @@
 <div class="p-6 lg:p-8">
     <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-            <h1 class="text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white font-heading underline decoration-indigo-500 decoration-4 underline-offset-8 uppercase italic">User Management</h1>
-            <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">Manage your athletes and trainers in one place.</p>
+            <h1 class="text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white font-heading underline decoration-indigo-500 decoration-4 underline-offset-8 uppercase italic">Gebruikersbeheer</h1>
+            <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">Beheer je atleten en trainers op één plek.</p>
         </div>
-        
+
         <div class="w-full lg:w-72">
-            <flux:input wire:model.live="search" icon="magnifying-glass" placeholder="Search athletes..." />
+            <flux:input wire:model.live="search" icon="magnifying-glass" placeholder="Atleten zoeken..." />
         </div>
     </div>
 
@@ -28,9 +28,9 @@
             <table class="w-full text-left">
                 <thead>
                     <tr class="border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50">
-                        <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">User</th>
-                        <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Role</th>
-                        <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Actions</th>
+                        <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Gebruiker</th>
+                        <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Rol</th>
+                        <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Acties</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
@@ -55,21 +55,21 @@
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
                                     <flux:dropdown position="bottom" align="end">
-                                        <flux:button variant="ghost" size="sm" icon="adjustments-horizontal">Role</flux:button>
+                                        <flux:button variant="ghost" size="sm" icon="adjustments-horizontal">Rol</flux:button>
                                         <flux:menu>
-                                            <flux:menu.item wire:click="setRole({{ $user->id }}, 'member')">Make Member</flux:menu.item>
-                                            <flux:menu.item wire:click="setRole({{ $user->id }}, 'trainer')">Make Trainer</flux:menu.item>
-                                            <flux:menu.item wire:click="setRole({{ $user->id }}, 'admin')">Make Admin</flux:menu.item>
+                                            <flux:menu.item wire:click="setRole({{ $user->id }}, 'member')">Maak Lid</flux:menu.item>
+                                            <flux:menu.item wire:click="setRole({{ $user->id }}, 'trainer')">Maak Trainer</flux:menu.item>
+                                            <flux:menu.item wire:click="setRole({{ $user->id }}, 'admin')">Maak Admin</flux:menu.item>
                                         </flux:menu>
                                     </flux:dropdown>
 
-                                    <flux:button 
-                                        variant="ghost" 
-                                        size="sm" 
+                                    <flux:button
+                                        variant="ghost"
+                                        size="sm"
                                         icon="trash"
                                         color="red"
                                         wire:click="deleteUser({{ $user->id }})"
-                                        wire:confirm="Are you sure you want to delete this user?"
+                                        wire:confirm="Weet je zeker dat je deze gebruiker wilt verwijderen?"
                                     />
                                 </div>
                             </td>
@@ -98,21 +98,21 @@
 
                     <div class="flex items-center gap-2 pt-2">
                         <flux:dropdown position="bottom" align="start" class="flex-1">
-                            <flux:button variant="subtle" size="sm" class="w-full" icon="adjustments-horizontal">Change Role</flux:button>
+                            <flux:button variant="subtle" size="sm" class="w-full" icon="adjustments-horizontal">Rol Wijzigen</flux:button>
                             <flux:menu>
-                                <flux:menu.item wire:click="setRole({{ $user->id }}, 'member')">Make Member</flux:menu.item>
-                                <flux:menu.item wire:click="setRole({{ $user->id }}, 'trainer')">Make Trainer</flux:menu.item>
-                                <flux:menu.item wire:click="setRole({{ $user->id }}, 'admin')">Make Admin</flux:menu.item>
+                                <flux:menu.item wire:click="setRole({{ $user->id }}, 'member')">Maak Lid</flux:menu.item>
+                                <flux:menu.item wire:click="setRole({{ $user->id }}, 'trainer')">Maak Trainer</flux:menu.item>
+                                <flux:menu.item wire:click="setRole({{ $user->id }}, 'admin')">Maak Admin</flux:menu.item>
                             </flux:menu>
                         </flux:dropdown>
 
-                        <flux:button 
-                            variant="subtle" 
-                            size="sm" 
+                        <flux:button
+                            variant="subtle"
+                            size="sm"
                             icon="trash"
                             color="red"
                             wire:click="deleteUser({{ $user->id }})"
-                            wire:confirm="Are you sure?"
+                            wire:confirm="Weet je zeker?"
                         />
                     </div>
                 </div>

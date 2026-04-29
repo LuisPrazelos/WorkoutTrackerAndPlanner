@@ -49,7 +49,7 @@
                 <div class="flex items-center gap-2 bg-zinc-100 dark:bg-zinc-800/50 p-1 rounded-2xl border border-zinc-200 dark:border-zinc-700 w-full sm:w-auto overflow-hidden">
                     <flux:button variant="subtle" icon="chevron-left" wire:click="previousWeek" size="sm" />
                     <span class="flex-1 text-center sm:px-4 text-[11px] md:text-sm font-bold uppercase tracking-tight whitespace-nowrap">
-                        Week van {{ \Carbon\Carbon::parse($startOfWeek)->format('d M') }}
+                        Week van {{ \Carbon\Carbon::parse($startOfWeek)->locale('nl')->translatedFormat('d M') }}
                     </span>
                     <flux:button variant="subtle" icon="chevron-right" wire:click="nextWeek" size="sm" />
                 </div>
@@ -94,7 +94,7 @@
             <div class="space-y-4">
                  <div class="flex items-center justify-between">
                     <h3 class="text-xl md:text-2xl font-black text-gray-900 dark:text-white italic uppercase tracking-tight">
-                        Focus: {{ \Carbon\Carbon::parse($selectedDate)->format('l d F') }}
+                        Focus: {{ \Carbon\Carbon::parse($selectedDate)->locale('nl')->translatedFormat('l d F') }}
                     </h3>
                 </div>
 
@@ -111,7 +111,7 @@
                             </div>
                             <div class="flex items-center gap-2">
                                 <flux:button wire:click="unschedule({{ $workout->id }})" variant="subtle" size="xs" class="text-red-500" icon="x-mark" />
-                                <flux:button wire:click="$parent.activateSchema({{ $workout->id }})" variant="primary" size="sm" class="!bg-cyan-500 hover:!bg-cyan-400 dark:!bg-cyan-500 dark:hover:!bg-cyan-400 !border-cyan-500 dark:!border-cyan-500 !text-zinc-950 dark:!text-zinc-950 text-[11px] py-1.5 shadow-md shadow-cyan-500/20" icon="play">Start</flux:button>
+                                <flux:button wire:click="activateSchema({{ $workout->id }})" variant="primary" size="sm" class="!bg-cyan-500 hover:!bg-cyan-400 dark:!bg-cyan-500 dark:hover:!bg-cyan-400 !border-cyan-500 dark:!border-cyan-500 !text-zinc-950 dark:!text-zinc-950 text-[11px] py-1.5 shadow-md shadow-cyan-500/20" icon="play">Start</flux:button>
                             </div>
                         </div>
                     </div>

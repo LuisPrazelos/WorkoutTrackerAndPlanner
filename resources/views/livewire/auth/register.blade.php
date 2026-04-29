@@ -1,7 +1,7 @@
 <div class="flex flex-col gap-8">
     <div class="text-center space-y-2">
-        <h2 class="text-2xl font-bold tracking-tight text-white font-heading">{{ __('Join the Program') }}</h2>
-        <p class="text-sm text-zinc-400">{{ __('Create your account to start tracking your gains today.') }}</p>
+        <h2 class="text-2xl font-bold tracking-tight text-white font-heading">{{ __('Account Aanmaken') }}</h2>
+        <p class="text-sm text-zinc-400">{{ __('Maak een account aan om vandaag je progressie bij te houden.') }}</p>
     </div>
 
     <!-- Session Status -->
@@ -11,28 +11,28 @@
         <!-- Name -->
         <flux:input
             wire:model="name"
-            :label="__('Full Name')"
+            :label="__('Volledige Naam')"
             type="text"
             required
             autofocus
             autocomplete="name"
-            placeholder="John Doe"
+            placeholder="Jan Janssen"
         />
 
         <!-- Email Address -->
         <flux:input
             wire:model="email"
-            :label="__('Email Address')"
+            :label="__('E-mailadres')"
             type="email"
             required
             autocomplete="email"
-            placeholder="name@example.com"
+            placeholder="naam@voorbeeld.com"
         />
 
         <!-- Password -->
         <flux:input
             wire:model="password"
-            :label="__('Create Password')"
+            :label="__('Wachtwoord Aanmaken')"
             type="password"
             required
             autocomplete="new-password"
@@ -43,7 +43,7 @@
         <!-- Confirm Password -->
         <flux:input
             wire:model="password_confirmation"
-            :label="__('Confirm Password')"
+            :label="__('Wachtwoord Bevestigen')"
             type="password"
             required
             autocomplete="new-password"
@@ -53,13 +53,13 @@
 
         <div class="pt-2">
             <flux:button type="submit" class="w-full bg-vibrant hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] text-white font-bold py-3 transition-all active:scale-95">
-                {{ __('Begin Training') }}
+                {{ __('Account Aanmaken') }}
             </flux:button>
         </div>
     </form>
 
     <div class="space-x-1 text-center text-sm text-zinc-500">
-        <span>{{ __('Already part of the team?') }}</span>
-        <flux:link :href="route('login')" class="text-indigo-400 font-semibold" wire:navigate>{{ __('Log in') }}</flux:link>
+        <span>{{ __('Al een account?') }}</span>
+        <flux:link :href="route('login')" class="text-indigo-400 font-semibold" wire:navigate>{{ __('Aanmelden') }}</flux:link>
     </div>
 </div>

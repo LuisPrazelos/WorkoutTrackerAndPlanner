@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
+        <script>
+            (function() {
+                const key = 'workout_tracker_theme_v2';
+                const saved = localStorage.getItem(key) ?? localStorage.getItem('theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'dark' || (!saved && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                }
+            })();
+        </script>
         @include('partials.head')
         <style>
             .glass-panel {
@@ -41,7 +51,7 @@
                 </div>
                 
                 <p class="text-center text-xs text-zinc-500">
-                    &copy; {{ date('Y') }} {{ config('app.name') }}. Built for results.
+                    &copy; {{ date('Y') }} {{ config('app.name') }}. Gebouwd voor resultaten.
                 </p>
             </div>
         </div>

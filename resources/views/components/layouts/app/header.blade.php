@@ -1,6 +1,16 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
+        <script>
+            (function() {
+                const key = 'workout_tracker_theme_v2';
+                const saved = localStorage.getItem(key);
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'dark' || (!saved && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                }
+            })();
+        </script>
         @include('partials.head')
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <style>
@@ -81,8 +91,8 @@
                                 <p class="text-xs text-zinc-500 truncate">{{ auth()->user()->email }}</p>
                             </div>
                             
-                            <flux:menu.item :href="route('settings.profile')" icon="user-circle" wire:navigate>Profile Settings</flux:menu.item>
-                            <flux:menu.item :href="route('settings.appearance')" icon="swatch" wire:navigate>Appearance</flux:menu.item>
+                            <flux:menu.item :href="route('settings.profile')" icon="user-circle" wire:navigate>Profielinstellingen</flux:menu.item>
+                            <flux:menu.item :href="route('settings.appearance')" icon="swatch" wire:navigate>Weergave</flux:menu.item>
                             <flux:menu.item :href="route('workout-schemas.create')" icon="plus-circle" wire:navigate class="lg:hidden text-indigo-500 font-medium">Nieuw Schema</flux:menu.item>
                             
                             @if(Auth::user()->isAdmin())
@@ -94,7 +104,7 @@
                             <form method="POST" action="{{ route('logout') }}" class="w-full">
                                 @csrf
                                 <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="text-red-500 hover:text-red-600">
-                                    {{ __('Log Out') }}
+                                    {{ __('Uitloggen') }}
                                 </flux:menu.item>
                             </form>
                         </flux:menu>
@@ -120,11 +130,11 @@
                 </a>
                 <a href="{{ route('schemas.index') }}" class="flex flex-col items-center gap-1 {{ request()->routeIs('schemas.index') ? 'text-indigo-500' : 'text-zinc-400' }}" wire:navigate>
                     <flux:icon name="book-open" class="size-5" variant="{{ request()->routeIs('schemas.index') ? 'solid' : 'outline' }}" />
-                    <span class="text-[10px] font-bold uppercase tracking-tighter">Library</span>
+                    <span class="text-[10px] font-bold uppercase tracking-tighter">Bibl.</span>
                 </a>
                 <a href="{{ route('workout-log') }}" class="flex flex-col items-center gap-1 {{ request()->routeIs('workout-log') ? 'text-indigo-500' : 'text-zinc-400' }}" wire:navigate>
                     <flux:icon name="clipboard-document-list" class="size-5" variant="{{ request()->routeIs('workout-log') ? 'solid' : 'outline' }}" />
-                    <span class="text-[10px] font-bold uppercase tracking-tighter">Logs</span>
+                    <span class="text-[10px] font-bold uppercase tracking-tighter">Logboek</span>
                 </a>
             </div>
         </nav>
@@ -183,9 +193,10 @@
                     }
                 };
 
-                // Using a new key to reset everyone to the new default dark mode
                 const themeKey = 'workout_tracker_theme_v2';
-                const currentTheme = localStorage.getItem(themeKey) || 'dark';
+                const saved = localStorage.getItem(themeKey);
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const currentTheme = saved ?? (prefersDark ? 'dark' : 'light');
                 applyTheme(currentTheme);
 
                 // Remove existing listener to avoid duplicates if script runs multiple times

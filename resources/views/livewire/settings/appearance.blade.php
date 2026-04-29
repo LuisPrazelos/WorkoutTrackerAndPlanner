@@ -1,13 +1,13 @@
 <div>
-    <x-auth-header :title="__('Appearance')" :description="__('Customize the look and feel of your workspace.')" />
+    <x-auth-header :title="__('Weergave')" :description="__('Pas het uiterlijk van je werkruimte aan.')" />
 
     <div class="mt-6">
         <x-section>
             <x-section.title>
-                {{ __('Theme') }}
+                {{ __('Thema') }}
             </x-section.title>
             <x-section.description>
-                {{ __('Select how you want your workspace to look. You can choose between light and dark, or have it sync with your system.') }}
+                {{ __('Kies hoe je werkruimte eruit moet zien. Je kunt kiezen tussen licht en donker, of laten synchroniseren met je systeem.') }}
             </x-section.description>
             <x-section.content>
                 <flux:theme-toggle />

@@ -50,6 +50,25 @@ class Agenda extends Component
             ->update(['scheduled_at' => null]);
     }
 
+    public function activateSchema($schemaId)
+    {
+        $schema = WorkoutSchema::where('id', $schemaId)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        WorkoutSchema::where('user_id', Auth::id())->update([
+            'is_active' => false,
+            'active_started_at' => null,
+        ]);
+
+        $schema->update([
+            'is_active' => true,
+            'active_started_at' => now(),
+        ]);
+
+        $this->redirect(route('dashboard'), navigate: true);
+    }
+
     public function render()
     {
         $days = [];
@@ -58,7 +77,7 @@ class Agenda extends Component
         for ($i = 0; $i < 7; $i++) {
             $dateString = $tempDate->toDateString();
             $days[] = [
-                'name' => $tempDate->format('D'),
+                'name' => $tempDate->locale('nl')->translatedFormat('D'),
                 'day' => $tempDate->format('d'),
                 'full' => $dateString,
                 'isToday' => $tempDate->isToday(),

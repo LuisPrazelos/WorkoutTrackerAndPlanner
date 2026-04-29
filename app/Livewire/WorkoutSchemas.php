@@ -20,13 +20,16 @@ class WorkoutSchemas extends Component
     {
         $user = Auth::user();
 
-        // Schema bibliotheek: leden zien alle publieke templates, trainers zien eigen templates + publieke
+        // Schema bibliotheek: publieke templates van trainers + eigen schema's van de gebruiker
         $query = WorkoutSchema::query()
             ->with(['user', 'schemaExercises.exercise'])
-            ->where('is_template', true)
             ->where(function ($q) {
-                $q->where('is_public', true)
-                  ->orWhere('user_id', Auth::id());
+                // Publieke templates van iedereen
+                $q->where(function ($q2) {
+                    $q2->where('is_template', true)->where('is_public', true);
+                })
+                // Of eigen schema's (template of niet)
+                ->orWhere('user_id', Auth::id());
             });
 
         // Filter on search
