@@ -14,34 +14,35 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create a Trainer user
-        User::factory()->create([
-            'name' => 'Trainer User',
+        // Keep seeded users stable across repeated deploys.
+        User::updateOrCreate([
             'email' => 'trainer@example.com',
+        ], [
+            'name' => 'Trainer User',
             'password' => Hash::make('password'),
             'role' => 'trainer',
         ]);
 
-        // Create a Member user
-        User::factory()->create([
-            'name' => 'Member User',
+        User::updateOrCreate([
             'email' => 'member@example.com',
+        ], [
+            'name' => 'Member User',
             'password' => Hash::make('password'),
             'role' => 'member',
         ]);
 
-        // Create another Member user
-        User::factory()->create([
-            'name' => 'John Doe',
+        User::updateOrCreate([
             'email' => 'john.doe@example.com',
+        ], [
+            'name' => 'John Doe',
             'password' => Hash::make('password'),
             'role' => 'member',
         ]);
 
-        // Create an Admin user
-        User::factory()->create([
-            'name' => 'Admin User',
+        User::updateOrCreate([
             'email' => 'admin@example.com',
+        ], [
+            'name' => 'Admin User',
             'password' => Hash::make('password'),
             'role' => 'admin',
         ]);
