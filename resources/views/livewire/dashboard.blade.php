@@ -4,7 +4,7 @@
 
         <div class="flex w-full md:w-auto items-center gap-3">
             <div class="flex-grow">
-                <flux:input wire:model.live.debounce.300ms="search" placeholder="Zoek op naam..." icon="magnifying-glass" />
+                <flux:input wire:model.live.debounce.300ms="search" placeholder="Zoek op naam..." />
             </div>
             <div class="w-40">
                 <flux:select wire:model.live="difficulty">
@@ -152,7 +152,7 @@
                 
                 <div class="shrink-0">
                     <flux:button wire:click="activateSchema({{ $todayWorkout->id }})" variant="primary" icon="play" 
-                                 class="vibrant-interactive h-16 px-8 text-xl font-black rounded-2xl border-none">
+                                 class="vibrant-interactive h-16 px-8 text-xl font-black rounded-lg border-none">
                         START NU!
                     </flux:button>
                 </div>

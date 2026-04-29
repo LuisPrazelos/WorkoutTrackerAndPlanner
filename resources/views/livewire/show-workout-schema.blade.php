@@ -38,7 +38,7 @@
                         }
                     }">
                     <button type="button" @click="copyToClipboard" 
-                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-500 text-white text-sm font-bold hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-500/20 active:scale-95">
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-500 text-white text-sm font-bold hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-500/20 active:scale-95">
                         <flux:icon name="share" class="h-4 w-4" />
                         <span x-text="copied ? 'Gekopieerd!' : 'Deel met Vrienden'"></span>
                     </button>
@@ -52,7 +52,7 @@
             @endif
             
             <a href="{{ route('workout-schemas.export-pdf', $workoutSchema) }}" target="_blank"
-               class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-700 transition-all shadow-sm">
+               class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-700 transition-all shadow-sm">
                 <flux:icon name="document-arrow-down" class="h-4 w-4" />
                 Exporteer
             </a>

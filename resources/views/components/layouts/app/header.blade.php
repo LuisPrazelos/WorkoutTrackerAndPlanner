@@ -50,7 +50,7 @@
                     <div class="h-4 w-px bg-zinc-200 dark:bg-zinc-800 mx-4"></div>
                     
                     <a href="{{ route('workout-schemas.create') }}" 
-                       class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-vibrant rounded-xl hover:shadow-lg hover:shadow-cyan-500/20 active:scale-95 whitespace-nowrap" 
+                       class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-vibrant rounded-lg hover:shadow-lg hover:shadow-cyan-500/20 active:scale-95 whitespace-nowrap"
                        wire:navigate>
                         <flux:icon name="plus" class="size-4" />
                         <span>Nieuw Schema</span>
@@ -61,7 +61,7 @@
 
                 <div class="flex items-center gap-3 shrink-0">
                     <!-- Theme Toggle -->
-                    <button id="theme-toggle-header" type="button" class="p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
+                    <button id="theme-toggle-header" type="button" class="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
                         <flux:icon name="moon" class="size-5 block dark:hidden" />
                         <flux:icon name="sun" class="size-5 hidden dark:block" />
                     </button>

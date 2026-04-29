@@ -16,7 +16,7 @@
     {{-- Filter balk --}}
     <div class="glass-panel p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div>
-            <flux:input wire:model.live.debounce.300ms="search" placeholder="Zoeken op naam..." icon="magnifying-glass" id="input-schema-search" />
+            <flux:input wire:model.live.debounce.300ms="search" placeholder="Zoeken op naam..." id="input-schema-search" />
         </div>
         <div>
             <select wire:model.live="filterDifficulty" id="select-filter-difficulty"

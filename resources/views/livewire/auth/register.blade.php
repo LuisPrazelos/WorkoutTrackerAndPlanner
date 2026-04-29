@@ -52,7 +52,7 @@
         />
 
         <div class="pt-2">
-            <flux:button type="submit" class="w-full bg-vibrant hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] text-white font-bold py-3 rounded-2xl transition-all active:scale-95">
+            <flux:button type="submit" class="w-full bg-vibrant hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] text-white font-bold py-3 transition-all active:scale-95">
                 {{ __('Begin Training') }}
             </flux:button>
         </div>

@@ -42,7 +42,7 @@
         <flux:checkbox wire:model="remember" :label="__('Keep me logged in')" />
 
         <div class="pt-2">
-            <flux:button type="submit" class="w-full bg-vibrant hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] text-white font-bold py-3 rounded-2xl transition-all active:scale-95" data-test="login-button">
+            <flux:button type="submit" class="w-full bg-vibrant hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] text-white font-bold py-3 transition-all active:scale-95" data-test="login-button">
                 {{ __('Secure Log In') }}
             </flux:button>
         </div>
