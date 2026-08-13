@@ -15,6 +15,9 @@ class ShowWorkoutSchema extends Component
     public WorkoutSchema $workoutSchema;
     public string $selectedTraineeId = '';
     public ?string $actionMessage = null;
+    public string $new_exercise_id = '';
+    public string $new_target_sets = '';
+    public string $new_target_reps = '';
 
     // This will hold the member's input for each planned exercise
     public $logs = [];
@@ -117,12 +120,14 @@ class ShowWorkoutSchema extends Component
 
     public function importSchema()
     {
-        if ($this->workoutSchema->user_id === Auth::id()) {
-            session()->flash('error', 'Dit is al jouw eigen schema!');
+        $user = Auth::user();
+
+        if ($this->workoutSchema->user_id === $user->id && ! $this->workoutSchema->is_template) {
+            session()->flash('error', 'Dit schema staat al op jouw dashboard.');
             return;
         }
 
-        $assignedSchema = $this->workoutSchema->assignToUser(Auth::user());
+        $assignedSchema = $this->workoutSchema->assignToUser($user);
 
         session()->flash(
             'success',
@@ -173,7 +178,7 @@ class ShowWorkoutSchema extends Component
 
     public function render()
     {
-        $isMemberView = !Auth::user()->isTrainer() && !$this->workoutSchema->is_template;
+        $isMemberView = $this->workoutSchema->user_id === Auth::id() && !$this->workoutSchema->is_template;
         $isOwnerTrainer = Auth::user()->isTrainer() && $this->workoutSchema->user_id === Auth::id();
 
         return view('livewire.show-workout-schema', [

@@ -40,7 +40,7 @@
                             elapsedHuman: '00:00',
                             updateTimer() {
                                 let now = Date.now();
-                                let diff = Math.floor((now - this.startedAt) / 1000);
+                                let diff = Math.floor(Math.max(0, now - this.startedAt - 1000) / 1000);
                                 if(diff < 0) diff = 0;
                                 let h = Math.floor(diff / 3600);
                                 let m = Math.floor((diff % 3600) / 60);

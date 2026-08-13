@@ -110,7 +110,7 @@ class Dashboard extends Component
             'sets' => 1,
             'reps' => $reps,
             'weight' => $weight,
-            'notes' => 'Gelogd via dashboard active workout',
+            'notes' => null,
             'logged_at' => now()->toDateString(),
         ]);
 

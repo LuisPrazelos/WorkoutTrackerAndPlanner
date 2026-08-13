@@ -141,11 +141,6 @@
                         <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 leading-none font-semibold">
                             {{ ucfirst($firstLog->exercise->muscle_group) }}
                         </span>
-                        @if($firstLog->workoutSchema)
-                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 leading-none font-semibold">
-                                {{ $firstLog->workoutSchema->name }}
-                            </span>
-                        @endif
                     </div>
                     
                     <div class="space-y-2">
@@ -185,7 +180,7 @@
                                                     <span class="text-indigo-600 dark:text-indigo-400 font-bold">{{ $log->weight }} kg</span>
                                                 @endif
                                             </div>
-                                            @if($log->notes)
+                                            @if($log->notes && $log->notes !== 'Gelogd via dashboard active workout')
                                                 <p class="text-xs text-gray-500 dark:text-gray-400 italic">"{{ $log->notes }}"</p>
                                             @endif
                                         </div>

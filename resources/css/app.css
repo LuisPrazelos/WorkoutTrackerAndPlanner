@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
 
 @source '../views';
 @source '../../vendor/livewire/flux';
@@ -53,6 +54,14 @@
     body {
         /* Subtle transition for theme switching */
         @apply transition-colors duration-300;
+    }
+
+    html.theme-transition *,
+    html.theme-transition *::before,
+    html.theme-transition *::after {
+        transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, box-shadow;
+        transition-duration: 250ms;
+        transition-timing-function: ease-in-out;
     }
 
     h1, h2, h3, h4, h5, h6 {
@@ -160,4 +169,3 @@ select:focus[data-flux-control] {
 .dark textarea {
     color-scheme: dark;
 }
-

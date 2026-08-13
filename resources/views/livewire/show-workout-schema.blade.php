@@ -19,9 +19,9 @@
         </div>
         <div class="flex gap-3 flex-wrap items-center">
             {{-- Save to Dashboard Button (for Public/Library schemas) --}}
-            @if(Auth::id() !== $workoutSchema->user_id)
+            @if(Auth::id() !== $workoutSchema->user_id || $workoutSchema->is_template)
                 <flux:button wire:click="importSchema" icon="plus" class="bg-vibrant !text-white border-none shadow-lg shadow-cyan-500/20 active:scale-95">
-                    Voeg toe aan Dashboard
+                    {{ Auth::id() === $workoutSchema->user_id ? 'Gebruik Zelf op Dashboard' : 'Voeg toe aan Dashboard' }}
                 </flux:button>
             @endif
 
